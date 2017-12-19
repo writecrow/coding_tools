@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Read File (via User Input selection)</title>
+	<link href="style.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
+	<script type="text/javascript">
+	google.charts.load('current', {'packages':['table','corechart']});
+	
+    var reader; //GLOBAL File Reader object for demo purpose only
+	var previous_element = "";
+	var final_text = "";
+	var file_name = "";
+	var concordance_lines = [];
+	var currentSelection = 0;
+	var arrayOfIds = [];
+	var totalTokens = 0;
+	var noText = true;
+	var previousTotal = 0;
+	var uri = "data:application/octet-stream," + encodeURIComponent(" ");
+		
+	function on_row_select() {
+  	  document.getElementById('table_window').scrollTop = 180;
+	}
+	
+	
+	
+	function drawTable(array) {
+        	var data = new google.visualization.DataTable();
+			var view = new google.visualization.DataView(data);
+        	
+			data.addColumn('number', 'Token Number');
+			data.addColumn('string', 'Left environment');
+			data.addColumn('string', 'Tag + right environment');
+        	data.addColumn('string', 'File');
+			data.addColumn('string', 'Original tag');
+			data.addColumn('string', 'Correct tag');
+
+
+			var lines = [];
+			
+			
+			for (j = 0; j < array.length; j++) {
+				lines.push([array[j][0], array[j][1] ,array[j][2],array[j][3] ,array[j][4], array[j][5]]);
+			
+			}
+			
+			
+			data.addRows(lines);
+			
+			var formatter = new google.visualization.NumberFormat({pattern: '######'});
+   			formatter.format(data, 0);
+			
+			
+			view.setColumns([1, 2, 3, 4, 5]);
+	
+
+        	var table = new google.visualization.Table(document.getElementById('table_window'));
+
+			var startPage = Math.trunc(currentSelection/3);
+    		var pageSize = 3;
+
+        	google.visualization.events.addListener(table, 'ready', function () {
+        	        
+        	        // add page counts to the page buttons div
+        	        var pageDiv = document.getElementsByClassName('google-visualization-table-div-page')[0];
+        	    });
+
+			
+        	table.draw(view, {page: 'enable', pageSize: pageSize, allowHtml: true, showRowNumber: true, width: '100%', height: 160, startPage: startPage});
+        
+			google.visualization.events.addListener(table, 'select', selectHandler);
+			
+			table.setSelection([{'row': currentSelection}]);
+			
+			function selectHandler() {
+  				var selection = table.getSelection();
+				for (var i = 0; i < selection.length; i++) {
+					var item = selection[i];
+					if (item.row != null) {
+						on_row_select();
+						var id = data.getFormattedValue(item.row, 0);	
+    					document.getElementById('table_window').scrollTop = 180; 
+						window.location.href = "#" + (parseInt(id) - 180);
+						var thisEl = document.getElementById(parseInt(id));
+						if (thisEl != null) {
+							thisEl.className = "main_highlight";
+							if (previous_element != "") { 
+								previous_element.className = "highlight";
+								element_a = document.getElementById(previous_element.id + "a");
+								if (element_a != null) {element_a.className = "not_highlight";}
+								var prvEl = document.getElementById(parseInt(previous_element.id)-1);
+						if (prvEl != null) {
+							if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+							else {prvEl.className = "highlight";}
+						}
+						
+						prvEl = document.getElementById(parseInt(previous_element.id)-2);
+						if (prvEl != null) {
+							if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+							else {prvEl.className = "highlight";}
+						}
+						
+						prvEl = document.getElementById(parseInt(previous_element.id)-3);
+						if (prvEl != null) {
+							if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+							else {prvEl.className = "highlight";}
+						}
+						
+						prvEl = document.getElementById(parseInt(previous_element.id)+1);
+						if (prvEl != null) {
+							if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+							else {prvEl.className = "highlight";}
+						}
+						
+						prvEl = document.getElementById(parseInt(previous_element.id)+2);
+						if (prvEl != null) {
+							if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+							else {prvEl.className = "highlight";}
+						}
+						
+						prvEl = document.getElementById(parseInt(previous_element.id)+3);
+						if (prvEl != null) {
+							if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+							else {prvEl.className = "highlight";}
+						}
+							}
+							previous_element = thisEl;
+							openTag(thisEl);
+						}
+						
+					}
+				
+				}
+			}
+
+		
+      	}
+	
+
+    /**
+     * Check for the various File API support.
+     */
+    function checkFileAPI() {
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            reader = new FileReader();
+            return true; 
+        } else {
+            alert('The File APIs are not fully supported by your browser. Fallback required.');
+            return false;
+        }
+
+		
+    }
+
+    /**
+     * read text input
+     */
+    function readText(filePath) {
+		
+		file_name = filePath.files[0].name;
+		document.getElementById('files_window').innerHTML += file_name+"<br>";
+        var output = ""; //placeholder for text output
+        if(filePath.files && filePath.files[0]) {           
+            reader.onload = function (e) {
+                output = e.target.result;
+				
+				
+				
+				var res = output.split(/\n+/);
+				var new_output = "";
+				for (i = 0; i < res.length; i++) {
+					p1 = res[i].search("<");
+					if (p1 != 0) {
+					 	new_output += res[i];
+						header = true;
+					}
+				
+				}
+				
+				
+				
+				//document.getElementById('text_window').innerHTML = new_output;
+				
+                displayContents(new_output);
+            };//end onload()
+            reader.readAsText(filePath.files[0]);
+        }//end if html5 filelist support
+        else if(ActiveXObject && filePath) { //fallback to IE 6-8 support via ActiveX
+            try {
+                reader = new ActiveXObject("Scripting.FileSystemObject");
+                var file = reader.OpenTextFile(filePath, 1); //ActiveX File Object
+                output = file.ReadAll(); //text contents of file
+                file.Close(); //close file "input stream"
+                displayContents(output);
+            } catch (e) {
+                if (e.number == -2146827859) {
+                    alert('Unable to access local files due to browser security settings. ' + 
+                     'To overcome this, go to Tools->Internet Options->Security->Custom Level. ' + 
+                     'Find the setting for "Initialize and script ActiveX controls not marked as safe" and change it to "Enable" or "Prompt"'); 
+                }
+            }       
+        }
+        else { //this is where you could fallback to Java Applet, Flash or similar
+            return false;
+        }       
+        return true;
+    }   
+
+	function printAll(item,index) {
+	
+		if (item[1].match(/tht/) == null & item[0].match(/that/) == null) {
+			final_text = final_text + '<a class="not_highlight" href="#" id="'+ index +'" title="' + item[1] + '">' + item[0] + ' </a>';
+		} else {
+			arrayOfIds.push(index);
+			if (item[1].match(/tht0/) == null) {
+				final_text = final_text + '<a class="highlight" href="#" id="'+ index +'" title="' + item[1] + '" type=" " onclick="openTag(this);return false;">' + item[0] + ' </a>';
+				concordance_lines.push([index, " " ,item[0], file_name, item[1], " "]);
+				
+			} else {
+				final_text = final_text + '<a class="not_highlight" href="#" id="'+ index +'a" title="' + item[1] + '">' + item[0] + ' </a>';
+				final_text = final_text + '<a class="highlight" href="#" id="'+ index +'" title="tht0" type=" " onclick="openTag(this);return false;">(omitted that) </a>';
+				concordance_lines.push([index, item[0], " ",file_name, item[1], " "]);
+			
+			}
+		}
+		
+		
+	}
+	
+	function getEnvironment() {
+	
+		var leftEnv = "";
+		var rightEnv = "";
+	
+		for (j = 0; j < concordance_lines.length; j++) {
+			if (concordance_lines[j][1] == " " | concordance_lines[j][2] == " ") {
+				current_token = concordance_lines[j][0];
+				leftEnv = "";
+				rightEnv = "";
+				for (i = 1; i < 21; i++) {
+					tokenIndex = current_token-(21-i);
+					tokenEl = document.getElementById(tokenIndex+"a");
+					if (tokenEl != null) {leftEnv = leftEnv + tokenEl.innerHTML + " ";}
+					tokenEl = document.getElementById(tokenIndex);
+					if (tokenEl != null) {
+						prevToken = tokenEl.innerHTML;
+						if (prevToken != "(omitted that) ") {leftEnv = leftEnv + prevToken + " ";}
+						}
+					
+					tokenIndex = current_token+i;
+					var rightEl = document.getElementById(tokenIndex);
+					if (rightEl != null) {
+						rightEnv = rightEnv + rightEl.innerHTML + " ";
+					}
+					
+					rightEl = document.getElementById(tokenIndex+"a");
+					if (rightEl != null) {
+						rightEnv = rightEnv + rightEl.innerHTML + " ";
+					}
+					
+					
+				}
+				concordance_lines[j][1] = leftEnv + " " + concordance_lines[j][1];
+				concordance_lines[j][2] = concordance_lines[j][2] + " " + rightEnv;
+			}
+		}
+		
+		
+	}
+
+    /**
+     * display content using a basic HTML replacement
+     */
+    function displayContents(txt) {
+        var el = document.getElementById('text_window'); 
+
+
+		var the_text = txt;
+		var keep_going = true;
+		var tuples = [];
+		var token = "";
+		var tag = "";
+		
+		while (keep_going) {	
+			the_match = the_text.match(/\s/);
+			if (the_match != null) {
+				token = the_text.substring(0,the_match.index);
+				the_text = the_text.substring(the_match.index+1);
+				//find next space, where tagging ends
+				the_match = the_text.match(/\s/);
+				if (the_match != null) {
+					tag = the_text.substring(1,the_match.index);
+					tag = tag.replace(/["]/g,"+quote");
+					tuples.push([token,tag]);
+					the_text = the_text.substring(the_match.index+1);
+				} else {break;}
+			} else {break;}
+			
+		} 
+		
+		previousTotal = totalTokens;
+		
+		for (j = 0; j < tuples.length; j++) {
+			printAll(tuples[j],totalTokens);
+			totalTokens += 1;
+		
+		} 
+		
+		document.getElementById('text_window').innerHTML =  final_text;
+		
+		getEnvironment();
+		drawTable(concordance_lines);
+		
+    }   
+
+	/**
+     * display tag info
+     */
+	function openTag(e){
+		var el = document.getElementById('tag_window');
+		if (previous_element != "") { 
+			previous_element.className = "highlight";
+			element_a = document.getElementById(previous_element.id + "a");
+			if (element_a != null) {element_a.className = "not_highlight";}
+			
+			var prvEl = document.getElementById(parseInt(previous_element.id)-1);
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById(parseInt(previous_element.id)-2);
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById(parseInt(previous_element.id)-3);
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById(parseInt(previous_element.id)+1);
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById(parseInt(previous_element.id)+2);
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById(parseInt(previous_element.id)+3);
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById((parseInt(previous_element.id)-1)+"a");
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById((parseInt(previous_element.id)-2)+"a");
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById((parseInt(previous_element.id)-3)+"a");
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById((parseInt(previous_element.id)+1)+"a");
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById((parseInt(previous_element.id)+2)+"a");
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			prvEl = document.getElementById((parseInt(previous_element.id)+3)+"a");
+			if (prvEl != null) {
+				if (prvEl.innerHTML.match(/that/) == null) {prvEl.className = "not_highlight";}
+				else {prvEl.className = "highlight";}
+			}
+			
+			
+			
+		}
+		e.className = "main_highlight";
+		previous_element = e;
+		
+		element_a = document.getElementById(e.id + "a");
+		if (element_a != null) {element_a.className = "conc_highlight";}
+		
+		
+		var prvEl = document.getElementById(parseInt(e.id)-1);
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		prvEl = document.getElementById((parseInt(e.id)-1)+ "a");
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		var prvEl = document.getElementById(parseInt(e.id)-2);
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		prvEl = document.getElementById((parseInt(e.id)-2)+ "a");
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		var prvEl = document.getElementById(parseInt(e.id)-3);
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		prvEl = document.getElementById((parseInt(e.id)-3)+ "a");
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		var prvEl = document.getElementById(parseInt(e.id)+1);
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		prvEl = document.getElementById((parseInt(e.id)+1)+ "a");
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		var prvEl = document.getElementById(parseInt(e.id)+2);
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		prvEl = document.getElementById((parseInt(e.id)+2)+ "a");
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		var prvEl = document.getElementById(parseInt(e.id)+3);
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		prvEl = document.getElementById((parseInt(e.id)+3)+ "a");
+		if (prvEl != null) {prvEl.className = "conc_highlight";}
+		
+		
+		correct_tag = '<br><form>Change correct Tag:<select name="tag" onchange="changeCorrectTag(this,' + e.id + ');">';
+		correct_tag = correct_tag + '<option value="select"> select new tag </option>';
+		correct_tag = correct_tag + '<option value="no_tag"> no tag </option>';
+		correct_tag = correct_tag + '<option value="tht+jcmp"> tht+jcmp </option>';
+		correct_tag = correct_tag + '<option value="tht+vcmp"> tht+vcmp </option>';
+		correct_tag = correct_tag + '<option value="tht+ncmp"> tht+ncmp </option>';
+		correct_tag = correct_tag + '<option value="tht+rel"> tht+rel </option>';
+		correct_tag = correct_tag + '<option value="tht0"> tht0 </option>';
+		correct_tag = correct_tag + '<option value="dt+dem"> dt+dem </option>';
+		correct_tag = correct_tag + '<option value="dt+pdem"> dt+pdem </option>';
+		correct_tag = correct_tag + '<option value="cs+quote"> cs+quote </option>';
+		correct_tag = correct_tag + '<option value="cs+sub"> cs+sub </option>';
+		
+		
+		for (j = 0; j < arrayOfIds.length; j++) {
+			if (arrayOfIds[j] == e.id) {currentSelection = j}
+		
+		}
+		
+		el.innerHTML = "Occurrence: " + (currentSelection+1) + "<br>Original Tag: " + e.title + "<br>Correct Tag: " + e.type + correct_tag;
+		drawTable(concordance_lines);
+	}
+	
+	function changeCorrectTag(e,id) {
+		var correcttag = e.value;
+		var el = document.getElementById(id);
+		el.type = correcttag;
+		openTag(document.getElementById(id));
+		
+		for (j = 0; j < concordance_lines.length; j++) {
+		
+			if (concordance_lines[j][0] == id) {concordance_lines[j][5] = correcttag;}
+		
+		}
+		
+		
+		drawTable(concordance_lines);
+	
+	}
+	
+	
+	
+	function exportData() {
+		var row_width = 0;
+        var content = "";
+		content += "Occurrence\tLeft environment\tTag + right  environment\tFile\tOriginal tag\tCorrect tag\tChanges\n";
+		
+		array = concordance_lines;
+		
+		
+		for (j = 0; j < array.length; j++) {
+				original_tag = array[j][4].replace(/\+(subj)*(obj)*\+\+=that/,"");
+				original_tag = original_tag.replace(/[,.:'";-]/g,"");
+				p = array[j][4].search("tht0");
+				if (p > -1) {original_tag = "tht0";}
+				array[j][1] = array[j][1].replace(/"/,' "');
+				array[j][2] = array[j][2].replace(/"/,' "');
+				array[j][1] = array[j][1].replace(/-/,' -');
+				array[j][2] = array[j][2].replace(/-/,' -');
+				content += (j+1) + "\t" + array[j][1] + "\t" + array[j][2] + "\t" + array[j][3] + "\t" + original_tag + "\t" +  array[j][5];
+				if (original_tag != array[j][5] & array[j][5] != " ") {
+					content += "\t1";
+				} else {
+					content += "\t0";
+				}
+				content += "\n";
+			
+			}
+		
+
+        // Build a data URI
+		uri = "data:application/octet-stream," + encodeURIComponent(content);
+
+		// Download file
+		
+		
+		var myLink = document.getElementById("save_link");
+		var blob = new Blob([content]);
+		
+		
+		myLink.href = window.URL.createObjectURL(blob);
+		myLink.download = document.getElementById("fname").value.replace(/\.txt/,'') + ".txt";
+		if (myLink.download == ".txt") {myLink.download = "tag_check.txt";}
+		myLink.style.display = "inline";
+	
+		myLink.click();
+		
+		
+    }
+
+	function selectPrevious() {
+		currentSelection = currentSelection - 1;
+		if (currentSelection < 0) {currentSelection = 0;}
+		window.location.href = "#" + (arrayOfIds[currentSelection]-180);
+		openTag(document.getElementById(arrayOfIds[currentSelection]));
+	}
+	
+	function selectNext() {
+		currentSelection = currentSelection + 1;
+		if (currentSelection > currentSelection.length) {currentSelection = (currentSelection.length - 1);}
+		window.location.href = "#" + (arrayOfIds[currentSelection]-180);
+		openTag(document.getElementById(arrayOfIds[currentSelection]));
+	}
+	
+	function myFunction() {
+    	location.reload();
+	}
+	
+	function closeSave() {
+	
+		document.getElementById("save_window").style.display = "none";
+		document.getElementById("save_shade").style.display = "none";
+		location.href = uri;
+	
+	}
+	
+	function cancelSave() {
+	
+		document.getElementById("save_window").style.display = "none";
+		document.getElementById("save_shade").style.display = "none";
+		
+	
+	}
+	
+	
+	function openSave() {
+	
+		
+		document.getElementById("save_window").style.display = "inline";
+		document.getElementById("save_shade").style.display = "inline";
+		document.getElementById("save_link").style.display = "none";
+		
+	
+	}
+	
+
+	function checkEnterKey(e) {
+		var x = event.which || event.keyCode;
+	
+		if(x === 13){
+			exportData();
+			return False;
+        }
+	
+		
+	}
+	
+</script>
+</head>
+<body onload="checkFileAPI();">
+    <div id="container">    
+        <input type="file" onchange='readText(this)' />
+        <br/>
+        <hr/>   
+        <h3>Contents of the text files:</h3>
+        <div id="text_window" class="text_window">
+            ... Click on "Choose File" above to open a text file ...
+        </div>
+    </div>
+	<div id="files_window" class="files_window"><b>Files opened:</b> <button onclick="myFunction()">Clear All</button><hr></div> 
+	<div id="tag_window" class="tag_window"></div> 
+	<div id="explanation_window" class="explanation_window">
+	<h3 align=center> Tag descriptions</h3>
+	<h4 align=center> Doug Biber (15 June, 1993)</h4>
+	<table>
+		<tr>
+		<td>tht+jcmp+++ </td><td>  that as dependent clause head + adjective complement</td>
+		</tr><tr>
+		<td>tht+ncmp+++   </td><td>that as dependent clause head + noun complement</td>
+		</tr><tr>
+		<td>tht+vcmp+++   </td><td>that as dependent clause head + verb complement</td>
+		</tr><tr>
+		<td>tht+rel+++    </td><td> that as dependent clause head + relative clause </td>
+		</tr><tr>
+		<td>tht+rel+obj++  </td><td>that as dep. clause head + relative clause + object position</td>
+		</tr><tr>
+		<td>tht+rel+subj++ </td><td>that as dep. clause head + relative clause + subject position</td>
+		</tr><tr>
+		<td>+tht0++	</td><td>that deletion (the tag tht0 marks the occurrence of a following that complement clause when the complementizer that has been deleted)</td>
+		</tr><tr>
+		<td>cs+sub+++   </td><td>subordinating conjunction + other (as, except, until, ...) this tag is interchangeable with cs"</td>
+		</tr><tr>
+		<td>cs+quote++++    </td><td> multi-word subordinating conjunction (in that, so that, given that, provided that ...)</td>
+		</tr><tr>
+		<td>dt+dem+++  </td><td> determiner + demonstrative (this,that,these,those modifying N)</td>
+		</tr><tr>
+		<td>dt+pdem+++  </td><td>determiner + demonstrative pronoun (this, that, these, those) </td>
+	</table>
+	</div>
+	<div id="control_window" class="control_window">
+		<table width="100%">
+			<tr>
+				<td><a href="#" class="button" onclick="openSave();">Download Data</a></td>
+				<td align=right><a href="#" class="button" onclick="selectPrevious();"> << </a> <a href="#" class="button" onclick="selectNext();"> >> </a></td>
+			</tr>
+		</table>
+	</div> 
+	<div id="table_window" class="table_window"></div>
+	<div id="save_shade" class="save_shade"></div>
+	<div id="save_window" class="save_window">
+		<table width="100%">
+			<tr>
+				<td align=center>
+				
+				Enter your file name: <form onsubmit="return false;"><input type="text" name="fname" id="fname" onkeypress="checkEnterKey(this)">.txt
+				<br> 
+				<a href="#" class="button2" onclick="exportData();">Download Data</a>
+				<a href="#" class="button2" onclick="cancelSave();">Cancel</a><input type="submit" style="display:none"/></form>
+				<br><br>
+				<a id="save_link" href="#" download="" onclick="closeSave();" target="_blank" class="button2">File Ready. Click here to download it.</a>
+				<p id="warning"><small>*If you are using Safari, your file name will be "Unknown" with no format extension.  Rename your file and add ".txt" to your file name.</small></p>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+
+</body>
+</html>

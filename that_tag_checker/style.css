@@ -1,0 +1,202 @@
+body {
+    background-color: #F0F4F4;
+}
+
+table {
+	font-family: verdana;
+	font-size: small;
+}
+
+td {
+    padding: 10px;
+}
+
+td.pos {
+    padding: 2px;
+}
+
+a {
+    font-family: verdana;
+}
+
+
+a:link {
+    text-decoration: none;
+	color: black;
+}
+
+a:active {
+    text-decoration: none;
+	color: black;
+}
+
+a:visited {
+    color: black;
+}
+
+.highlight {
+	background: #C7B6C2;
+}
+
+.main_highlight {
+	background: #B2B2B2;
+}
+
+.not_highlight {
+	background: white;
+}
+
+.conc_highlight {
+	background: #d9d9d9;
+	font-weight: bold;
+}
+
+div.text_window {
+	background: white;
+	position: absolute;
+    bottom: 20px;
+	top: 100px;
+	left: 20px;
+	right: 490px;
+	bottom: 200px;
+    border: 3px solid #353535;
+	overflow: auto;
+	padding: 10px;
+
+}
+
+div.filter_window {
+	background: white;
+	position: absolute;
+    bottom: 20px;
+	top: 300px;
+	left: 20px;
+    width: 800px;
+	bottom: 200px;
+	overflow: auto;
+	padding: 10px;
+	opacity: 0.5;
+	border: 3px solid white;
+
+}
+
+div.files_window {
+	background: white;
+	position: absolute;
+	width: 160px;
+	right: 300px;
+	bottom: 200px;
+	height: 160px;
+    border: 3px solid #353535;
+	overflow: auto;
+	padding: 10px;
+	font-family: verdana;
+	font-size: 80%;
+
+}
+
+
+div.tag_window {
+	background: white;
+	position: absolute;
+	width: 250px;
+	right: 20px;
+	bottom: 250px;
+	height: 110px;
+    border: 3px solid #353535;
+	overflow: auto;
+	padding: 10px;
+	font-family: verdana;
+	font-size: 80%;
+
+}
+
+div.control_window {
+	background: #353535;
+	position: absolute;
+	width: 270px;
+	right: 20px;
+	bottom: 200px;
+	height: 60px;
+    border: 3px solid #353535;
+	overflow: auto;
+	font-family: verdana;
+	font-size: 80%;
+
+}
+
+div.explanation_window {
+	background: white;
+	position: absolute;
+	width: 460px;
+	right: 20px;
+	bottom: 390px;
+	top: 100px;
+    border: 3px solid #353535;
+	overflow: auto;
+	font-family: verdana;
+	font-size: 80%;
+
+}
+
+div.table_window {
+	background: white;
+	position: absolute;
+	height: 160px;
+	left: 20px;
+	right: 20px;
+	bottom: 10px;
+    border: 3px solid #353535;
+	overflow: auto;
+	padding: 10px;
+	font-family: verdana;
+
+}
+
+.button {
+    background-color: white;
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+}
+
+.button2 {
+    background-color: #C7B6C2;
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+}
+
+div.save_shade {
+	background-color:rgba(0, 0, 0, 0.5);
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	display: none;
+}
+
+div.save_window {
+	background: white;
+	position: absolute;
+	left: 400px;
+	top: 250px;
+	height: 175px;
+	width: 400px;
+    border: 3px solid #353535;
+	overflow: auto;
+	font-family: verdana;
+	padding: 10px;
+	display: none;
+	font-family: verdana;
+
+}

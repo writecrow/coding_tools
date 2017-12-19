@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Read File (via User Input selection)</title>
+	<link href="style.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
+	<script type="text/javascript">
+	google.charts.load('current', {'packages':['table','corechart']});
+	var previous_element = "";
+	var current_sentence = "";
+	var currentSelection = 1;
+	var concordance_lines = [];
+	var count_sentences = 0;
+	var first_file_read = false;
+	var uri = "data:application/octet-stream," + encodeURIComponent(" ");
+	var ready_to_download = false;
+	
+	function drawTable(array) {
+        	var data = new google.visualization.DataTable();
+			var view = new google.visualization.DataView(data);
+        	
+			data.addColumn('string', 'Sentence #');
+			data.addColumn('string', 'Sentence');
+			data.addColumn('string', 'File Name');
+			data.addColumn('string', 'Code');
+        	data.addColumn('boolean', 'Citation?');
+
+
+
+			var lines = [];
+			
+			if (concordance_lines != []) {
+				for (j = 0; j < array.length; j++) {
+					lines.push([array[j][0], array[j][1] ,array[j][2],array[j][3],array[j][4]]);
+			
+				}
+			}
+			
+			
+			data.addRows(lines);
+			
+			var formatter = new google.visualization.NumberFormat({pattern: '######'});
+   			formatter.format(data, 0);
+			
+			
+			view.setColumns([0, 1, 2, 3, 4]);
+	
+
+        	var table = new google.visualization.Table(document.getElementById('table_window'));
+
+			var startPage = Math.trunc(currentSelection/4);
+    		var pageSize = 4;
+
+        	google.visualization.events.addListener(table, 'ready', function () {
+        	        
+        	        // add page counts to the page buttons div
+        	        var pageDiv = document.getElementsByClassName('google-visualization-table-div-page')[0];
+        	    });
+
+			
+        	table.draw(view, {page: 'enable', pageSize: pageSize, allowHtml: true, showRowNumber: true, width: '100%', height: 160, startPage: startPage});
+        
+			google.visualization.events.addListener(table, 'select', selectHandler);
+			
+			table.setSelection([{'row': currentSelection}]);
+			
+			function selectHandler() {
+  				var selection = table.getSelection();
+				for (var i = 0; i < selection.length; i++) {
+					var item = selection[i];
+					if (item.row != null) {
+						currentSelection = i;
+						var id = data.getFormattedValue(item.row, 0);
+						openTag(document.getElementById(id+"n"));	
+						var moveto = parseInt(id);
+						if (moveto < 1) {moveto = 1};
+						window.location.href = "#" + moveto + "n";
+					}
+				
+				}
+			}
+
+		
+      	}
+
+	
+    	
+
+    /**
+     * Check for the various File API support.
+     */
+    function checkFileAPI() {
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            reader = new FileReader();
+            return true; 
+        } else {
+            alert('The File APIs are not fully supported by your browser. Fallback required.');
+            return false;
+        }
+    }
+
+    /**
+     * read text input
+     */
+    function readText(filePath) {
+		
+		file_name = filePath.files[0].name;
+		document.getElementById('files_window').innerHTML += file_name+"<br>";
+        var output = ""; //placeholder for text output
+        if(filePath.files && filePath.files[0]) {           
+            reader.onload = function (e) {
+                output = e.target.result;
+				
+				output = output.replace(/</g,'&lt');
+				output = output.replace(/>/g,'&gt');
+				output = output.replace(/[\u201C\u201D]/g,'"');
+				output = output.replace(/[\u2018\u2019]/g, "'");
+				output = output.replace(/([;\.\!\?]"?)([A-Z][a-z]+)/g,'$1 $2');
+				output = output.replace(/([;\.\!\?]\s+)/g,'$1 <s>');
+				output = output.replace(/([\.]"\s+)/g,'$1 <s>');
+				output = output.replace(/([\s|,|\(]\s*para\.\s+)<s>/g,'$1');
+				output = output.replace(/([\s|,]\s*pa?g?\.\s+)<s>/g,'$1');
+				output = output.replace(/([\s|,]\s*[vV]ol\.\s+)<s>/g,'$1');
+				output = output.replace(/(\s+et\s+al\.\s+)<s>/g,'$1');
+				output = output.replace(/(\s+[A-Z]\.\s+)<s>/g,'$1');
+				output = output.replace(/(Dr\.\s+)<s>/g,'$1');
+				output = output.replace(/(Mr\.\s+)<s>/g,'$1');
+				output = output.replace(/(Mrs\.\s+)<s>/g,'$1');
+				output = output.replace(/(Ms\.\s+)<s>/g,'$1');
+				output = output.replace(/([pP]rof\.\s+)<s>/g,'$1');
+				output = output.replace(/(\."\s+)<s>(\s*\(.+\)\s+)/g,'$1 $2 <s>');
+				output = output.replace(/([\s+\(][A-Z]\.\s*[A-Z]\.\s+)<s>/g,'$1');
+				output = output.replace(/(\."\s+\(pa?g?r?a?\.\s+)<s>([0-9]+\))(\s+[A-Z])/g,'$1 $2 <s> $3');
+				output = output.replace(/(\."\s+)<s>(\(pa?g?r?a?\.\s+[0-9]+\))(\s+[A-Z])/g,'$1 $2 <s> $3');
+				output = output.replace(/(\)\s+)<s>([a-z])/g,'$1 $2');
+				output = output.replace(/(\s+[aA]rt\.\s+)<s>([0-9])/g,'$1 $2');
+				var res = output.split(/<s>/); 
+				
+				var text = "";
+				var foundReference = false;
+				
+				var last_count = count_sentences;
+				var this_count = 0;
+				
+				for (j = 0; j < res.length; j++) {
+				
+					var res2 = res[j].split(/\n+/); 
+					
+					for (i = 0; i < res2.length; i++) {
+					
+						var p =  res2[i].search('&lt')
+						if (p == 0) {
+							text = text + res2[i] + "<br>"
+						} else {
+							//check if it is an empty line
+							var m = res2[i].match(/\w/g)
+							if (m == null) {
+								text = text + "<br>"
+							} else {
+								this_count = count_sentences+1;
+								text = text + ' <a href="#" id="' + this_count + 'n"class="highlight" onclick="openTag(this);return false;" type="' + file_name + '">[' + this_count +']</a> <a href="#" id="' + this_count + '" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + res2[i] + '</a> ';
+								count_sentences = this_count;
+								
+								//check if there was any punctuation in this "sentence", if not, break line
+								//check if there was an http in the sentence, if there was, break line
+								var n = res2[i].match(/[\.\!\?]/g)
+								var o = res2[i].match(/http/g)
+								if (n == null | o != null) {
+									text = text + "<br>"
+								}
+								
+							}
+						}
+					
+						
+						
+					}
+					
+				}
+				
+				text = text.replace(/&lt/g,'&lt;');
+				text = text.replace(/&gt/g,'&gt;');
+				text = text.replace(/\n/g,'<br>');
+				
+				
+                displayContents(text);
+            };//end onload()
+            reader.readAsText(filePath.files[0]);
+        }//end if html5 filelist support
+        else if(ActiveXObject && filePath) { //fallback to IE 6-8 support via ActiveX
+            try {
+                reader = new ActiveXObject("Scripting.FileSystemObject");
+                var file = reader.OpenTextFile(filePath, 1); //ActiveX File Object
+                output = file.ReadAll(); //text contents of file
+                file.Close(); //close file "input stream"
+                displayContents(output);
+            } catch (e) {
+                if (e.number == -2146827859) {
+                    alert('Unable to access local files due to browser security settings. ' + 
+                     'To overcome this, go to Tools->Internet Options->Security->Custom Level. ' + 
+                     'Find the setting for "Initialize and script ActiveX controls not marked as safe" and change it to "Enable" or "Prompt"'); 
+                }
+            }       
+        }
+        else { //this is where you could fallback to Java Applet, Flash or similar
+            return false;
+        }       
+        return true;
+    }   
+
+
+	
+
+
+    /**
+     * display content using a basic HTML replacement
+     */
+    function displayContents(txt) {
+        var el = document.getElementById('text_window'); 
+		
+		if (first_file_read) {
+			document.getElementById('text_window').innerHTML +=  "<hr>" + txt;
+		
+		} else {
+			document.getElementById('text_window').innerHTML =  txt;
+			first_file_read = true;
+		}
+		
+
+		
+    }   
+
+
+	function openTag(e){
+		var el = document.getElementById('tag_window');
+		var sntN = e.id.replace(/n/g,'');
+		var snt = document.getElementById(sntN);
+		var snt_n = document.getElementById(sntN+"n");
+		
+		current_sentence = sntN;
+		
+		snt.className = "conc_highlight";
+		
+		if (previous_element != "") {
+			document.getElementById(previous_element).className = "not_highlight";
+		}
+		
+		
+		for (var i = 0, length = concordance_lines.length; i < length; i++) {
+				if (concordance_lines[i][0] == current_sentence) {
+					currentSelection = i;
+					break;
+				}
+			
+		}
+			
+		if (concordance_lines.length != 0) {
+			drawTable(concordance_lines);
+		} else {
+			document.getElementById('table_window').innerHTML = "";
+		}
+		
+		previous_element = sntN;
+		
+		el.innerHTML = "Sentence Selected: #" + sntN + "<br><b>Sentence:</b> " + snt.innerHTML + "<br><br>" ;
+		
+		
+		
+		if (snt_n.title == "tagged") {
+			el.innerHTML = el.innerHTML + '<form id="tag_f">Tag this sentence? <input type="checkbox" id="tagged" name="tagged" value="tagged" onclick="displayCoding();" checked> Yes, tag it! (This contains a reference to a source.)<br></form>';
+			el.innerHTML = el.innerHTML + '<div id="codes" class="codes"></div>';
+			el.innerHTML = el.innerHTML + '<hr><form id="ref_f" style="display:none;">Reference? <input type="checkbox" id="ref" name="ref" value="ref" onclick="markAsRef();" > Yes, this is a reference.<br></form>';
+			displayCoding();
+		} else {
+			if (snt_n.title == "ref") {
+				el.innerHTML = el.innerHTML + '<form id="tag_f">Tag this sentence? <input type="checkbox" id="tagged" name="tagged" value="tagged" onclick="displayCoding();" disabled> Yes, tag it! (This contains a reference to a source.)<br></form>';
+				el.innerHTML = el.innerHTML + '<div id="codes" class="codes"></div>';
+				el.innerHTML = el.innerHTML + '<hr><form id="ref_f">Reference? <input type="checkbox" id="ref" name="ref" value="ref" onclick="markAsRef();" checked> Yes, this is a reference.<br></form>';
+			
+			} else {
+				el.innerHTML = el.innerHTML + '<form id="tag_f">Tag this sentence? <input type="checkbox" id="tagged" name="tagged" value="tagged" onclick="displayCoding();"> Yes, tag it! (This contains a reference to a source.)<br></form>';
+				el.innerHTML = el.innerHTML + '<div id="codes" class="codes"></div>';
+				el.innerHTML = el.innerHTML + '<hr><form id="ref_f">Reference? <input type="checkbox" id="ref" name="ref" value="ref" onclick="markAsRef();"> Yes, this is a reference.<br></form>';
+			}
+		}
+		
+		
+		el.innerHTML = el.innerHTML + '<hr>Comments about this sentence:<br><form id="comments"><textarea rows="4" cols="30" name="comments" onchange="includeComments(this);">' + snt.getAttribute("data-comments") + '</textarea></form>';
+
+
+	}
+	
+	function includeComments(e) {
+		var snt = document.getElementById(current_sentence);
+		snt.setAttribute("data-comments", e.value);
+	
+	}
+	
+	function markAsRef() {
+		var e_tag = document.getElementById('tagged');
+		var snt_n = document.getElementById(current_sentence+"n");
+		var snt = document.getElementById(current_sentence);
+		var e = document.getElementById("ref");
+		
+		if (e.checked) {
+			snt_n.title = "ref";
+			snt.title = "ref";
+			if (e_tag != null) {e_tag.disabled = true;}
+		} else {
+			snt_n.title = "";
+			snt.title = "";
+			if (e_tag != null) {e_tag.disabled = false;}
+		}
+	
+	}
+	
+	function displayCoding(){
+		var codeDiv = document.getElementById('codes');
+		var el = document.getElementById('tag_window');
+		var snt = document.getElementById(current_sentence);
+		var snt_n = document.getElementById(current_sentence+"n");
+		var e = document.getElementById("tagged");
+		var e_ref = document.getElementById('ref_f');
+		var cit = false;
+		
+		if (e.checked) { 
+			if (e_ref != null) {e_ref.style.display = "none";}
+			snt_n.title = "tagged";
+			codeDiv.innerHTML = '<hr><form>Form: <br>';
+			codeDiv.innerHTML = codeDiv.innerHTML + '<input type="radio" id="integral" name="type" value="integral" onclick="setCode();"> <font color="red">Integral</font><br>';
+			codeDiv.innerHTML = codeDiv.innerHTML + '<input type="radio" id="non-integral" name="type" value="non-integral" onclick="setCode();"> <font color="blue">Non-integral</font><br>';
+			codeDiv.innerHTML = codeDiv.innerHTML + '<input type="radio" id="hybrid" name="type" value="hybrid" onclick="setCode();"> <font color="green">Hybrid</font><br>';
+			
+			if (snt.type == "citation") {
+				codeDiv.innerHTML = codeDiv.innerHTML + '<hr>Citation? <input type="checkbox" id="citation" name="citation" value="citation" onclick="setCitation();" checked> Yes, this  contains an attempt to include an in-text citation<br></form>';
+				cit = true;
+			} else {
+				codeDiv.innerHTML = codeDiv.innerHTML + '<hr>Citation? <input type="checkbox" id="citation" name="citation" value="citation" onclick="setCitation();"> Yes, this contains an attempt to include an in-text citation. <br></form>';
+			}
+			var current_code = snt.title;
+			
+			if (current_code != "") {
+				document.getElementById(current_code).checked = true;
+			}
+			
+			
+			var found = false;
+			
+			for (var i = 0, length = concordance_lines.length; i < length; i++) {
+				if (concordance_lines[i][0] == current_sentence) {
+					concordance_lines[i][2] = snt_n.type;
+					concordance_lines[i][3] = current_code;
+					concordance_lines[i][4] = cit;
+					currentSelection = 	i;
+					found = true;
+					break;
+				}
+			
+			}
+			
+			if (!found) {
+				concordance_lines.push([current_sentence, snt.innerHTML, snt_n.type, current_code, cit]);
+				currentSelection = 	concordance_lines.length;
+				
+			}
+			
+			
+		} else { 
+			if (e_ref != null) {e_ref.style.display = "inline";}
+			codeDiv.innerHTML = "";
+			snt_n.title = "";
+			snt.title = "";
+			
+			var toRemove = 0;
+			
+			for (var i = 0, length = concordance_lines.length; i < length; i++) {
+				if (concordance_lines[i][0] == current_sentence) {
+					toRemove = i; 
+					break;
+				}
+			
+			}
+			
+			for (var j = toRemove; j < concordance_lines.length-1; j++) {
+				concordance_lines[j] = concordance_lines[j+1];
+			}
+			concordance_lines.pop();
+		}
+		
+		if (concordance_lines.length != 0) {
+			drawTable(concordance_lines);
+		} else {
+			document.getElementById('table_window').innerHTML = "";
+		}
+		
+	}
+	
+	function setCitation(){
+		var e = document.getElementById("citation");
+		var snt = document.getElementById(current_sentence);
+		var cit = false;
+		
+		if (e.checked) { 
+			snt.type = "citation";		
+			cit = true;
+			
+		} else {
+			snt.type = "not_citation";
+		}
+		
+		for (var i = 0, length = concordance_lines.length; i < length; i++) {
+				if (concordance_lines[i][0] == current_sentence) {
+					concordance_lines[i][4] = cit;
+					currentSelection = 	i;
+					break;
+				}
+			
+		}
+		
+		
+		if (concordance_lines.length != 0) {
+			drawTable(concordance_lines);
+		} else {
+			document.getElementById('table_window').innerHTML = "";
+		}
+	}
+	
+	function setCode(){
+		var snt = document.getElementById(current_sentence);
+		var radios = document.getElementsByName('type');
+
+		for (var i = 0, length = radios.length; i < length; i++) {
+		    if (radios[i].checked) {
+		        // do whatever you want with the checked radio
+		        snt.title = radios[i].value;
+		
+		        // only one radio can be logically checked, don't check the rest
+		        break;
+		    }
+		}
+		
+		for (var i = 0, length = concordance_lines.length; i < length; i++) {
+				if (concordance_lines[i][0] == current_sentence) {
+					concordance_lines[i][3] = snt.title;
+					currentSelection = 	i;
+					break;
+				}
+			
+			}
+			
+		if (concordance_lines.length != 0) {
+			drawTable(concordance_lines);
+		} else {
+			document.getElementById('table_window').innerHTML = "";
+		}
+	}
+	
+
+	function selectPrevious() {
+		var currentID = parseInt(current_sentence) - 1;
+		if (currentID < 1) {currentID = 1;}
+		
+		window.location.href = "#" + currentID + "n";
+		document.getElementById('text_window').scrollTop = document.getElementById('text_window').scrollTop - 50; 
+		openTag(document.getElementById(currentID + "n"));
+	}
+	
+	function selectNext() {
+		var currentID = parseInt(current_sentence) + 1;
+		if (currentID > count_sentences) {currentID = count_sentences;}
+		
+		window.location.href = "#" + currentID + "n";
+		document.getElementById('text_window').scrollTop = document.getElementById('text_window').scrollTop - 50; 
+		openTag(document.getElementById(currentID + "n"));
+	}
+
+
+	function exportData() {
+        var content = "Sentence Number\tSentence\tFile\tCode\tCitation\tTagged\tComments\n";
+		var output_sentence = "";
+		
+		array = concordance_lines;
+		
+		for (j = 1; j < count_sentences+1; j++) {
+				var found = false;
+				for (var i = 0, length = concordance_lines.length; i < length; i++) {
+					if (concordance_lines[i][0] == j) {
+						output_sentence = concordance_lines[i][1].replace(/&lt;/g,'<');
+						output_sentence = output_sentence.replace(/&gt;/g,'>');
+						output_sentence = output_sentence.replace(/\n/g,'');
+						output_sentence = output_sentence.replace(/\t/g,'');
+						content += concordance_lines[i][0] + "\t" + output_sentence + "\t" + concordance_lines[i][2] + "\t" + concordance_lines[i][3] + "\t" + concordance_lines[i][4] + "\t1";
+						found = true;
+						break;
+					}
+			
+				}
+				
+				if (!found) {
+					output_sentence = document.getElementById(j).innerHTML.replace(/&lt;/g,'<');
+					output_sentence = output_sentence.replace(/&gt;/g,'>');
+					output_sentence = output_sentence.replace(/\n/g,'');
+					output_sentence = output_sentence.replace(/\t/g,'');
+					var this_el = document.getElementById(j+"n");
+					content += j + "\t" + output_sentence + "\t" + this_el.type + "\t" + this_el.title + "\t" + " " + "\t0";
+				}
+				
+				content += "\t" + document.getElementById(j).getAttribute("data-comments").replace(/\n/g,' ') + "\n";
+			
+			}
+		
+
+        // Build a data URI
+		uri = "data:application/octet-stream," + encodeURIComponent(content);
+
+		// Download file
+		var myLink = document.getElementById("save_link");
+		var blob = new Blob([content]);
+		
+		
+		myLink.href = window.URL.createObjectURL(blob);
+		myLink.download = document.getElementById("fname").value.replace(/\.txt/,'') + ".txt";
+		if (myLink.download == ".txt") {myLink.download = "tag_check.txt";}
+		myLink.style.display = "inline";
+		
+		ready_to_download = true;	
+		myLink.click();	
+		location.href = uri;
+		
+    }
+
+	function closeExplanation() {
+	
+		document.getElementById("explanation_shade").style.display = "none";
+		document.getElementById("explanation_expanded").style.display = "none";
+		document.getElementById("close_window").style.display = "none";
+	
+	}
+	
+	function openExplanation() {
+	
+		document.getElementById("explanation_shade").style.display = "inline";
+		document.getElementById("explanation_expanded").style.display = "inline";
+		document.getElementById("close_window").style.display = "inline";
+	
+	}
+	
+	function closeSave() {
+	
+		document.getElementById("save_window").style.display = "none";
+		document.getElementById("save_shade").style.display = "none";
+		location.href = uri;
+		
+	
+	}
+	
+	function cancelSave() {
+	
+		document.getElementById("save_window").style.display = "none";
+		document.getElementById("save_shade").style.display = "none";
+		
+	
+	}
+	
+	function openSave() {
+	
+		
+		document.getElementById("save_window").style.display = "inline";
+		document.getElementById("save_shade").style.display = "inline";
+		document.getElementById("save_link").style.display = "none";
+		ready_to_download = false;
+		
+	
+	}
+
+	function checkEnterKey(e) {
+		var x = event.which || event.keyCode;
+	
+		if(x === 13){
+			exportData();
+			return False;
+        }
+	
+		
+	}	
+
+</script>
+</head>
+<body onload="checkFileAPI();">
+    <div id="container">    
+        <input type="file" onchange='readText(this)' />
+        <br/>
+        <hr/>   
+        <h3>Contents of the text files:</h3>
+        <div id="text_window" class="text_window">
+            ... Click on "Choose File" above to open a text file ...
+        </div>
+    </div>
+	<div id="tag_window" class="tag_window"></div> 
+	<div id="table_window" class="table_window"></div>
+	<div id="explanation_window" class="explanation_window">
+	<table width="100%">
+			<tr>
+				<td align=center><a href="#" class="button" onclick="openExplanation();">View Coding Criteria</a></td>
+			</tr>
+		</table>
+	
+	</div>
+	<div id="files_window" class="files_window">
+		<b>Files opened:</b> <button onclick="location.reload();">Clear All</button><br>
+	
+	</div>
+	<div id="control_window" class="control_window">
+		<table width="100%">
+			<tr>
+				<td><a href="#" class="button" onclick="openSave();">Download Data</a></td>
+				<td align=right><a href="#" class="button" onclick="selectPrevious();"> << </a> <a href="#" class="button" onclick="selectNext();"> >> </a></td>
+			</tr>
+		</table>
+	</div> 
+	<div id="explanation_shade" class="explanation_shade"></div>
+	
+	
+	<div id="explanation_expanded" class="explanation_expanded">
+	<br>
+	<h1>Coding Criteria</h1>
+	<hr>
+	<h2>Step One: Integral, non-integral or hybrid?</h2>
+	
+	<h3>Integral</h3>
+	<p>Author(s) as actants (Omizo & Hart-Davidson, 2016): </p>
+	
+	
+	<blockquote><i>Duffy et al. ([2010]) suggested that specific types of psychopathological manifestations are precursors for bipolar disorder in this high-risk population.</i><br> (Example from Omizo and Hart-Davidson (2016))</blockquote>
+	
+	<p><b>Descriptions from Swales (2014):</b> Authors would act as subject, agent, two types of adjuncts (as a prepositional phrase or a subordinate clause), part of a noun phrase or other.</p>
+	
+	<ul>
+ 
+		<li><b>As subject:</b> Myers (1966) hypothesized that the freshwater fishes of the West Indies dispersed from Central America...
+ 
+		<li><b>As agent:</b> It was hypothesized by Myers (1966) that the freshwater fishes of the West Indies dispersed from Central America.
+ 
+ 
+		<li><b>As two types of adjuncts:</b> According to Myers (1966), freshwater fishes of the West Indies likely dispersed from Central America. [prepositional phrase]
+ 
+		<li>As Myers (1966) suggests, freshwater fishes of the West Indies may have dispersed from Central America. [subordinate clause]
+ 
+		<li><b>Part of a noun phrase:</b> Myers' 1966 hypothesis proposed that freshwater fishes...
+ 
+		<li>The hypothesis proposed by Myers (1966) suggested that freshwater fishes...
+ 
+		<li><b>Other category:</b>  In contrast to Addison et al. (1982), they argue that...
+	</ul>
+	
+	<p>Sentences like these are integral because they contain the title of a work and/or the author's name:</p>
+	<ul>
+		<li>The first article I will report on is "title of work" ...
+		<li>The published works that are going to be analyzed are (1) "title of work" ...  
+		<li>According to suggestions of (Author's Name) ...
+		<li>According to (Author's Name) ...
+	</ul>
+
+
+	<hr>
+	<h3>Non-integral</h3>
+	
+	<p>Omizo and Hart-Davidson (2016):</p>
+	<ul>
+		<li>Extracting: An idea from a source without involving the source in the syntactic predication of the idea.
+		<li>Grouping: In-text citations that list 3 or more sources within a parenthesis or bracket
+	</ul>
+
+
+	<p>Swales (2014):</p>
+	<ul>
+		<li>source, or attribution citations, which indicate where the idea or  information is taken from;
+
+		<li>Identification citations, which identify an actor in the sentence, as in "It has been suggested (Wilson, 1999)";
+
+		<li>origin citations, which indicate "the originator of a concept, technique or product" (Thompson, 2001, p. 105), as in "The CPE procedure (Kim, 1985)";
+
+		<li>reference citations, which point to work containing further information;
+
+		<li>example, where the cited work illustrates what is stated in the sentence.
+	</ul>
+	
+	<p>Not a reference to the author or article:</p>
+	<ul>
+		<li> There is evidence that suggests that [...].
+	</ul>
+	
+	<p>Non-integral <b>citation</b> will have an (Author, YEAR) at the end:</p>
+	
+	<ul>
+		<li> In terms of ..., it appears that there are lots of ... (Author, 2017).  
+	</ul>
+	
+	<hr>
+	<h3>Hybrid</h3>
+	
+	<p>Contains author reference or article information at beginning of sentence + non-integral citation at the end.</p>
+	
+	<hr>
+	<h2>Step Two: Citation or non-citation?</h2>
+	
+	<h3>Citation</h3>
+	
+	<p>The sentence contains an attempt to include an in-text citation. There is a direct reference to the author or title of the work.</p>
+	
+	<p>The reference here needs to be to the actual author of the text cited. If the name used is being cited by the author (citation within citation), it is a non-citation.</p>
+	
+	<h3>Non-citation</h3>
+
+	<p>Sentences that might be considered references in other taxonomies, such as attributions that replace the named agent with a pronoun and lack a parenthetical date or a parenthetical with a name and date or a bracketed numeral reference. Even if the author is unknown, which makes it impossible for the writer to use a name, it is not a citation.</p>
+	
+	<p>Example of <b>integral</b> (step 1) <b>non-citations</b> (step 2): sentences containing "the author", "the two authors" or "the article" (these noun phrases do not have to be the subject for the reference to be integral). </p>
+	
+	
+	
+
+	
+	
+	
+	</div>
+
+	<div id="close_window" class="close_window">
+		<a href="#" class="button2" onclick="closeExplanation();">Close this window</a>
+	</div>
+	
+	<div id="save_shade" class="save_shade"></div>
+	<div id="save_window" class="save_window">
+		<table width="100%">
+			<tr>
+				<td align=center>
+				
+				Enter your file name: <form onsubmit="return false;"><input type="text" name="fname" id="fname">.txt
+				<br> 
+				<a href="#" class="button3" onclick="exportData();">Download Data</a>
+				<a href="#" class="button3" onclick="cancelSave();">Cancel</a><input type="submit" style="display:none"/></form>
+				<br><br>
+				<a id="save_link" href="#" download="" onclick="closeSave();" target="_blank" class="button3">File Ready. Click here to download it.</a>
+				<p id="warning"><small>*If you are using Safari, your file name will be "Unknown" with no format extension. Rename your file and add ".txt" to your file name.</small></p>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+
+</body>
+</html>
