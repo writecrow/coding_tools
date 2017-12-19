@@ -2,6 +2,7 @@
 Crow tools to assist human coders with coding and tag checking.
 
 ## That tag Checker
+[Open Tag Checker](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/citation_coder/index.html)
 Input files: text files tagged with Biber tagger (one token per line, each line contains token and Biber tag separated by tab)
 Output file: tab separated text file that can be opened using Excel
 
