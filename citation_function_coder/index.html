@@ -1,0 +1,237 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Citation Function Coding Tool</title>
+		<link href="style.css" rel="stylesheet">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
+		<script src="js/FileSaver.js"></script>
+		<script type="text/javascript">
+		
+			var current_sentence_id = "";
+			var total_number_of_citations = 0;
+			var cit_snt_numbers = [];
+			var total_number_of_sentences = 0;
+			var file_name = "";
+		
+			function setFunction(e){
+				var snt = document.getElementById(current_sentence_id);
+				snt.setAttribute("cit-function", e.value);
+			
+			}
+			
+			function includeComments(e) {
+				var snt = document.getElementById(current_sentence_id);
+				snt.setAttribute("data-comments", e.value);
+			}
+		
+			function openFunctionCoding(){
+			    var coding_text = "";
+			    
+			
+				var snt = document.getElementById(current_sentence_id);
+				var current_function = snt.getAttribute("cit-function");
+				
+			
+			    coding_text += '<hr><form>Function for sentence ' + current_sentence_id + ':<br>';
+			    coding_text += '<input type="radio" id="attribution" name="function" value="attribution" onclick="setFunction(this);"> Attribution<br>';
+			    coding_text += '<input type="radio" id="exemplification" name="function" value="exemplification" onclick="setFunction(this);"> Exemplification<br>';
+			    coding_text += '<input type="radio" id="reference" name="function" value="reference" onclick="setFunction(this);"> Further reference<br>';
+			    coding_text += '<input type="radio" id="use" name="function" value="use" onclick="setFunction(this);"> Statement of use<br>';
+			    coding_text += '<input type="radio" id="aplication" name="function" value="aplication" onclick="setFunction(this);"> Application<br>';
+				coding_text += '<input type="radio" id="links" name="function" value="links" onclick="setFunction(this);"> Establishing links between sources<br>';
+				coding_text += '<input type="radio" id="comparison" name="function" value="comparison" onclick="setFunction(this);"> Comparison of one’s own findings or interpretation with other sources<br>';
+				coding_text += '<input type="radio" id="other" name="function" value="other" onclick="setFunction(this);"> Other<br>';
+				
+				
+				coding_text += 'Comments:<br><textarea rows="4" cols="30" name="comments" onchange="includeComments(this);">' + snt.getAttribute("data-comments")  + '</textarea>';
+				coding_text += '</form>';
+	
+				
+				document.getElementById('info_box').innerHTML += coding_text;
+				
+				if (current_function != "") {
+					document.getElementById(current_function).checked = true;
+				}
+								
+			
+			}
+			
+			function getInfo(e) {
+				var info_text = "";
+				var sntN = e.id.replace(/n/g,'');
+				var snt = document.getElementById(sntN);
+				var snt_n = document.getElementById(sntN+"n");
+				
+				current_sentence_id = sntN;
+				
+				var cit = "citation";
+				if (snt.type != "citation") {
+					cit = "non-citation";
+				}
+				
+				info_text += "Sentence number " +  sntN + "<br>";
+				if (snt.title == "integral") {
+					info_text += "This has been tagged as an integral " + cit + ".";
+				} else if (snt.title == "non-integral") {
+				    info_text += "This has been tagged as a non-integral " + cit + ".";
+				} else if (snt.title == "hybrid") {
+				    info_text += "This has been tagged as a hybrid " + cit + ".";
+				} else {
+					info_text += "This has not been tagged.";
+				}
+			
+				document.getElementById('info_box').innerHTML = info_text;
+				
+				if (cit == "citation"){
+				    openFunctionCoding();
+				}
+			
+			}
+		
+			function readText(filePath) {
+		
+				reader = new FileReader();
+				file_name = filePath.files[0].name;
+				
+				document.getElementById('filename').value = file_name.replace(/\.tsv/g,'') + "_functioncoded.txt";
+			
+
+      		    if(filePath.files && filePath.files[0]) {           
+            		reader.onload = function (e) {
+                		var output = e.target.result;
+						var lines = d3.tsvParse(output);
+						var text = "";
+						// for each row in the data
+						for (i = 0; i < lines.length; i++) { 
+							var snt_nmbr = lines[i].Sentence_Number;
+							var title_n = 'title="';
+							
+							// get reference type, if any
+							var title = 'title="';
+							if (lines[i].Code == "non-integral") {
+							    title += 'non-integral"';
+								title_n += 'tagged"';
+							} else if (lines[i].Code == "integral") {
+							    title += 'integral"';
+							    title_n += 'tagged"';
+							} else if (lines[i].Code == "hybrid") {
+							    title += 'hybrid"';
+							    title_n += 'tagged"';
+							} else if (lines[i].Code == "ref") {
+							    title += 'ref"';
+							    title_n += 'ref"';
+							} else {
+								title += '"';
+								title_n += '"';
+							}
+							
+							// citation or non-citation?
+							if (lines[i].Citation == "TRUE") {
+								var type = ' type="citation"';
+								total_number_of_citations += 1;
+								cit_snt_numbers.push(snt_nmbr);
+							} else {
+							   var type = ' type="not_citation"';
+							}
+							
+    						text += ' <a href="#" id="' + snt_nmbr + 'n" class="highlight" type="' + file_name + '" onclick="getInfo(this);return false;" ' + title_n + '>[' + snt_nmbr +']</a> <a href="#" id="' + snt_nmbr + '" class="not_highlight" data-comments="" cit-function="" onclick="getInfo(this);return false;" '+ title + type + '>' + lines[i].Sentence + '</a> ';
+							total_number_of_sentences += 1;
+						}
+						document.getElementById('text_window').innerHTML = text;
+						document.getElementById('cit_info').innerHTML = "Number of citations in this document: " + total_number_of_citations + " (" + cit_snt_numbers + ")";
+					}
+					reader.readAsText(filePath.files[0]);
+				}
+				
+			
+			}
+			
+			
+			function exportData() {
+		        var content = "Sentence_Number\tSentence\tFile\tCode\tCitation\tTagged\tFunction\tComments\r\n";
+				
+						
+				for (var i = 0, length = total_number_of_sentences; i < length; i++) {
+				
+					var snt = document.getElementById(i+1);
+				
+				
+					var cit = "FALSE";
+					if (snt.type == 'citation'){
+						cit = "TRUE";
+					}
+					
+					if (snt.title != "") {
+						content += (i+1) + "\t" + snt.innerHTML + "\t" + file_name + "\t" + snt.title + "\t" + cit + "\t" + 1 + "\t" + snt.getAttribute("cit-function").replace(/\n/g,' ') + "\t" + snt.getAttribute("data-comments") + "\r\n";
+						
+					} else {
+						content += (i+1) + "\t" + snt.innerHTML + "\t" + file_name + "\t\t\t" + 0 + "\t" + snt.getAttribute("data-comments").replace(/\n/g,' ') + "\t\r\n";
+					}
+					
+					
+				}
+			
+				
+				var blob = new Blob([content], {type: "text/plain;charset=utf-8"});  
+				saveAs(blob, document.getElementById('filename').value);
+	
+				
+		    }
+		
+			
+	</script>
+		
+	</head>
+	<body>
+
+
+	<div id="top_bar" class="top_bar">
+		<table width="100%">
+			
+			<tr>
+			
+			<td><img src="images/crow_logo.png" width="50"></td>
+			<td>
+				<table>
+				
+					<tr>
+						<td>Open File:</td>
+						
+						
+					
+					</tr>
+					
+					<tr>
+						<td>
+							<input type="file" onchange='readText(this)' />
+						</td>
+						
+					</tr>
+					
+				</table>
+			</td>
+			
+			<td><h2>Citation Function Coding Tool </h2></td>
+			<td><div id="cit_info"></div></td>
+			<td><a href="#" class="button" onclick="location.reload();">Clear Tool</a></td>
+			
+			</tr>
+			
+		</table>
+			
+	</div>
+	
+	<div id="text_window" class="text_window"></div>
+	<div id="info_box" class="info_box"></div>
+	
+	<div id="bottom_bar" class="bottom_bar">
+	
+		<form><a href="#" class="button" onclick="exportData();return false;">Download File</a> File name: <input type="text" id="filename" size="50"></form>
+		
+	</div>
+	
+	
+	</body>
+</html>
