@@ -21,9 +21,124 @@
 			
 			}
 			
+			function setQuote(e){
+				var snt = document.getElementById(current_sentence_id);
+				snt.setAttribute("quote", e.value);
+			
+			}
+			
 			function includeComments(e) {
 				var snt = document.getElementById(current_sentence_id);
 				snt.setAttribute("data-comments", e.value);
+			}
+			
+			function setCode(e){
+				var snt = document.getElementById(current_sentence_id);
+				snt.title = e;
+			
+			}
+			
+			
+			function openFormFunctionCoding(){
+				var coding_text = "";
+				
+				var snt = document.getElementById(current_sentence_id);
+				var snt_n = document.getElementById(current_sentence_id + 'n');
+				
+				var current_tag = snt_n.title;
+				
+				var current_function = snt.getAttribute("cit-function");
+				var current_quote = snt.getAttribute("quote");
+				var current_code = snt.title;
+				
+				coding_text += '<form>';
+				coding_text += '<hr>Do you want to code sentence #'  + current_sentence_id + ' for form and function?<br>';
+				coding_text += '<input type="radio" id="tagged" name="tag" value="tagged" onclick="setTag(this);" checked> Yes (This contains a reference to a source.) <br>';
+				coding_text += '<input type="radio" id="not_tagged" name="tag" value="" onclick="setTag(this);"> No<br>';
+				coding_text += '<h2>Form</h2>What type of reference?<br>';
+				//coding_text += '<input type="radio" id="integral" name="type" value="integral" onclick="setCode(this);"> <font color="red">Integral</font><br>';
+				//coding_text += '<input type="radio" id="non-integral" name="type" value="non-integral" onclick="setCode(this);"> <font color="blue">Non-integral</font><br>';
+				//coding_text += '<input type="radio" id="hybrid" name="type" value="hybrid" onclick="setCode(this);"> <font color="green">Hybrid</font><br>';
+				coding_text += "By tagging this sentence, you're setting its form as " + '<font color="blue">Non-integral</font> non-citation.';
+				setCode("non-integral");
+				coding_text += '<h2>Function</h2>';
+				coding_text += 'Does sentence #'  + current_sentence_id + ' contain a quote?<br>';
+				coding_text += '<input type="radio" id="yes" name="quote" value="yes" onclick="setQuote(this);"> Yes<br>';
+				coding_text += '<input type="radio" id="no" name="quote" value="no" onclick="setQuote(this);"> No<br>';
+			    coding_text += '<hr>Function for sentence ' + current_sentence_id + ':<br>';
+			    coding_text += '<input type="radio" id="attribution" name="function" value="attribution" onclick="setFunction(this);"> Attribution<br>';
+			    coding_text += '<input type="radio" id="exemplification" name="function" value="exemplification" onclick="setFunction(this);"> Exemplification<br>';
+			    coding_text += '<input type="radio" id="reference" name="function" value="reference" onclick="setFunction(this);"> Further reference<br>';
+			    coding_text += '<input type="radio" id="use" name="function" value="use" onclick="setFunction(this);"> Statement of use<br>';
+			    coding_text += '<input type="radio" id="aplication" name="function" value="aplication" onclick="setFunction(this);"> Application<br>';
+				coding_text += '<input type="radio" id="links" name="function" value="links" onclick="setFunction(this);"> Establishing links between sources<br>';
+				coding_text += '<input type="radio" id="comparison" name="function" value="comparison" onclick="setFunction(this);"> Comparison of one’s own findings or interpretation with other sources<br>';
+				coding_text += '<input type="radio" id="other" name="function" value="other" onclick="setFunction(this);"> Other<br>';
+				
+				coding_text += 'Comments:<br><textarea rows="4" cols="30" name="comments" onchange="includeComments(this);">' + snt.getAttribute("data-comments")  + '</textarea>';
+				coding_text += '</form>';
+	
+				
+				document.getElementById('info_box').innerHTML = coding_text;
+				
+				if (current_function != "") {
+					document.getElementById(current_function).checked = true;
+				}
+				
+				if (current_quote != "") {
+					document.getElementById(current_quote).checked = true;
+				}
+				
+				//if (current_code != "") {
+				//	document.getElementById(current_code).checked = true;
+				//}
+			
+			}
+			
+			function setTag(e){
+				var snt = document.getElementById(current_sentence_id);
+				var snt_n = document.getElementById(current_sentence_id + 'n');
+				snt_n.title = e.value;
+				
+				
+				if (e.value == "tagged") {
+					openFormFunctionCoding();
+				} else {
+					snt.title = "";
+					snt.setAttribute("cit-function", "");
+					snt.setAttribute("quote", "");
+					openFormCoding();
+				}
+			
+			}
+			
+			function openFormCoding(){
+			    var coding_text = "";
+			
+				var snt = document.getElementById(current_sentence_id);
+				var snt_n = document.getElementById(current_sentence_id + 'n');
+				
+				var current_tag = snt_n.title;
+				
+				coding_text += '<form>';
+				coding_text += '<hr>Do you want to code sentence #'  + current_sentence_id + ' for form and function?<br>';
+				coding_text += '<input type="radio" id="tagged" name="tag" value="tagged" onclick="setTag(this);"> Yes (This contains a reference to a source.)<br>';
+				coding_text += '<input type="radio" id="not_tagged" name="tag" value="" onclick="setTag(this);"> No<br>';
+				
+				coding_text += 'Comments:<br><textarea rows="4" cols="30" name="comments" onchange="includeComments(this);">' + snt.getAttribute("data-comments")  + '</textarea>';
+				coding_text += '</form>';
+	
+				
+				document.getElementById('info_box').innerHTML = coding_text;
+				
+				if (current_tag != "") {
+					document.getElementById("tagged").checked = true;
+					openFormFunctionCoding();
+				} else {
+					document.getElementById("not_tagged").checked = true;
+				}
+
+			
 			}
 		
 			function openFunctionCoding(){
@@ -32,9 +147,13 @@
 			
 				var snt = document.getElementById(current_sentence_id);
 				var current_function = snt.getAttribute("cit-function");
+				var current_quote = snt.getAttribute("quote");
 				
-			
-			    coding_text += '<hr><form>Function for sentence ' + current_sentence_id + ':<br>';
+				coding_text += '<form>';
+				coding_text += '<hr>Does sentence #'  + current_sentence_id + ' contain a quote?<br>';
+				coding_text += '<input type="radio" id="yes" name="quote" value="yes" onclick="setQuote(this);"> Yes<br>';
+				coding_text += '<input type="radio" id="no" name="quote" value="no" onclick="setQuote(this);"> No<br>';
+			    coding_text += '<hr>Function for sentence ' + current_sentence_id + ':<br>';
 			    coding_text += '<input type="radio" id="attribution" name="function" value="attribution" onclick="setFunction(this);"> Attribution<br>';
 			    coding_text += '<input type="radio" id="exemplification" name="function" value="exemplification" onclick="setFunction(this);"> Exemplification<br>';
 			    coding_text += '<input type="radio" id="reference" name="function" value="reference" onclick="setFunction(this);"> Further reference<br>';
@@ -53,6 +172,10 @@
 				
 				if (current_function != "") {
 					document.getElementById(current_function).checked = true;
+				}
+				
+				if (current_quote != "") {
+					document.getElementById(current_quote).checked = true;
 				}
 								
 			
@@ -84,8 +207,10 @@
 			
 				document.getElementById('info_box').innerHTML = info_text;
 				
-				if (cit == "citation"){
+				if (cit == "citation" || snt.title == "integral"){
 				    openFunctionCoding();
+				} else {
+					openFormCoding();
 				}
 			
 			}
@@ -136,11 +261,11 @@
 							   var type = ' type="not_citation"';
 							}
 							
-    						text += ' <a href="#" id="' + snt_nmbr + 'n" class="highlight" type="' + file_name + '" onclick="getInfo(this);return false;" ' + title_n + '>[' + snt_nmbr +']</a> <a href="#" id="' + snt_nmbr + '" class="not_highlight" data-comments="" cit-function="" onclick="getInfo(this);return false;" '+ title + type + '>' + lines[i].Sentence + '</a> ';
+    						text += ' <a href="#" id="' + snt_nmbr + 'n" class="highlight" type="' + file_name + '" onclick="getInfo(this);return false;" ' + title_n + '>[' + snt_nmbr +']</a> <a href="#" id="' + snt_nmbr + '" class="not_highlight" data-comments="" cit-function="" quote="" onclick="getInfo(this);return false;" '+ title + type + '>' + lines[i].Sentence + '</a> ';
 							total_number_of_sentences += 1;
 						}
 						document.getElementById('text_window').innerHTML = text;
-						document.getElementById('cit_info').innerHTML = "Number of citations in this document: " + total_number_of_citations + " (" + cit_snt_numbers + ")";
+						//document.getElementById('cit_info').innerHTML = "Number of citations in this document: " + total_number_of_citations + " (" + cit_snt_numbers + ")";
 					}
 					reader.readAsText(filePath.files[0]);
 				}
@@ -150,7 +275,7 @@
 			
 			
 			function exportData() {
-		        var content = "Sentence_Number\tSentence\tFile\tCode\tCitation\tTagged\tFunction\tComments\r\n";
+		        var content = "Sentence_Number\tSentence\tFile\tCode\tCitation\tTagged\tQuote\tFunction\tComments\r\n";
 				
 						
 				for (var i = 0, length = total_number_of_sentences; i < length; i++) {
@@ -164,10 +289,10 @@
 					}
 					
 					if (snt.title != "") {
-						content += (i+1) + "\t" + snt.innerHTML + "\t" + file_name + "\t" + snt.title + "\t" + cit + "\t" + 1 + "\t" + snt.getAttribute("cit-function").replace(/\n/g,' ') + "\t" + snt.getAttribute("data-comments") + "\r\n";
+						content += (i+1) + "\t" + snt.innerHTML + "\t" + file_name + "\t" + snt.title + "\t" + cit + "\t" + 1 + "\t" + snt.getAttribute("quote") + "\t" + snt.getAttribute("cit-function").replace(/\n/g,' ') + "\t" + snt.getAttribute("data-comments") + "\r\n";
 						
 					} else {
-						content += (i+1) + "\t" + snt.innerHTML + "\t" + file_name + "\t\t\t" + 0 + "\t" + snt.getAttribute("data-comments").replace(/\n/g,' ') + "\t\r\n";
+						content += (i+1) + "\t" + snt.innerHTML + "\t" + file_name + "\t\t\t" + 0 + "\t\t" + snt.getAttribute("data-comments").replace(/\n/g,' ') + "\t\r\n";
 					}
 					
 					
