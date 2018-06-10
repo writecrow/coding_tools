@@ -9,7 +9,7 @@ Input files: text files tagged with Biber tagger (one token per line, each line 
 
 Output file: tab separated text file that can be opened using Excel
 
-The tool highlights a subset of tags (the regex to grap these tags can be found on line 112, filter variable), in case the human tag checker needs to change that tag. 
+The tool highlights a subset of tags (the regex to grab these tags can be found on line 112, filter variable), in case the human tag checker needs to change that tag. 
 
 ## That tag Checker
 [Open Tag Checker](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/that_tag_checker/index.html)
