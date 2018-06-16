@@ -1,14 +1,24 @@
 # Coding Tools
 Crow tools to assist human coders with coding and tag checking.
 
-## That tag Checker
-[Open Tag Checker](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/that_tag_checker/index.html)
+## Subset tag Checker
 
-Input files: text files tagged with Biber tagger (one token per line, each line contains token and Biber tag separated by tab)
+[Open Tag Checker](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/subset_tag_checker/index.html)
+
+Input files: text files tagged with Biber tagger (one token per line, each line contains token and Biber tag separated by space)
 
 Output file: tab separated text file that can be opened using Excel
 
-The tool highlights all "that" tags (every tag that contains that, omitted or not) and lists all possible that tags, in case the huma tag checker needs to change that tag. Multiple text files can be loaded at once.
+The tool highlights a subset of tags (the regex to grab these tags can be found on line 112, filter variable), in case the human tag checker needs to change that tag. 
+
+## That tag Checker
+[Open Tag Checker](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/that_tag_checker/index.html)
+
+Input files: text files tagged with Biber tagger (one token per line, each line contains token and Biber tag separated by space)
+
+Output file: tab separated text file that can be opened using Excel
+
+The tool highlights all "that" tags (every tag that contains that, omitted or not) and lists all possible that tags, in case the human tag checker needs to change that tag. Multiple text files can be loaded at once.
 
 ![alt text](https://github.com/writecrow/coding_tools/blob/master/that_tag_checker/screenshot.png)
 
