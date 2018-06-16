@@ -92,6 +92,21 @@ div.bottom_bar {
 
 }
 
+div.button_bar {
+	background: #303030;
+	position: absolute;
+	bottom: 0px;
+	width: 500px;
+	right: 0px;
+	height: 35px;
+	overflow: auto;
+	padding: 10px;
+	font-family: verdana;
+	color: white;
+	display: none;
+
+}
+
 div.text_window {
 	background-color: #FFFFFF;
 	position: absolute;
