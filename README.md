@@ -1,6 +1,14 @@
 # Coding Tools
 Crow tools to assist human coders with coding and tag checking.
 
+## Crow Output Coding Tool
+
+[Open Coding Tool](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/Crow%20Output%20Coding%20Tool/index.html)
+
+Input files: csv files exported (i.e., downloaded) from Crow online platform.
+
+Output file: tab separated text file that can be opened using Excel
+
 ## Subset tag Checker
 
 [Open Tag Checker](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/subset_tag_checker/index.html)
