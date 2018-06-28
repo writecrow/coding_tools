@@ -123,7 +123,7 @@
 				file_name = filePath.files[0].name;
 				var output = ""; //placeholder for text output
 				//filter for target tags, change this regular expression to change filter
-				var filter = /\+rel\+|tht\+.cmp|tht0|jjt?\+atrb\+/;
+				var filter = /\+rel\+|tht\+.cmp|tht0|jj[rt]?\+atrb\+/;
 				token_nbr = 0;
 				if(filePath.files && filePath.files[0]) {           
             		reader.onload = function (e) {
