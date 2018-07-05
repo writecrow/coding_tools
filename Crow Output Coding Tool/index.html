@@ -131,7 +131,7 @@
 									total_sentence_count += 1;		
     								text += '<a href="#" class="conc_highlight" id="s' + 
     									total_sentence_count + '">' + total_sentence_count + "</a> ..." + 
-    									'<a href="#" tag="" data-comments="" class="no_highlight" id="' + total_sentence_count + '" onclick="openTag(this);return false;">' + 
+    									'<a href="#" tag="" metaline="' + (i+1) + '" data-comments="" class="no_highlight" id="' + total_sentence_count + '" onclick="openTag(this);return false;">' + 
     									excerpts[k] + '...</a><br> ';
     							}
     						}
@@ -139,7 +139,7 @@
 					document.getElementById('text_window').innerHTML = text;
 					current_sentence = 1;	
 					document.getElementById('button_bar').style.display = 'inline';
-					document.getElementById('filename').value = file_name.replace(/\.txt/g,'') + "_coded.txt";
+					document.getElementById('filename').value = file_name.replace(/\.csv/g,'') + "_coded.txt";
 					};
 				reader.readAsText(filePath.files[0]);
                 };
@@ -156,7 +156,7 @@
 				
 					if (sentence != null) {
 						var tag = sentence.getAttribute('tag');
-						content +=  meta_data_lines[i] + '\t' + sentence.innerHTML.replace(/\r?\n/g,' ') + '\t' + tag + '\t' + sentence.getAttribute("data-comments").replace(/\n/g,' ') + "\r\n"; 
+						content +=  meta_data_lines[Number(sentence.getAttribute("metaline"))] + '\t' + sentence.innerHTML.replace(/\r?\n/g,' ') + '\t' + tag + '\t' + sentence.getAttribute("data-comments").replace(/\n/g,' ') + "\r\n"; 
 					}
 				}
 			
