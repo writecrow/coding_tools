@@ -105,7 +105,8 @@
                 			  }
                 			} else {
                 				elements = lines[i].split(/_/);
-                				text += elements[0] + ' ';
+                				text = text + '<a href="#" id="' + token_nbr + '" claws="" biber="" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[0] + "</a> ";  
+                				token_nbr += 1;
                 				}
                 			
                 		}
