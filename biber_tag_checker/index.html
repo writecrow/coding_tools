@@ -89,8 +89,8 @@
                 		for (i = 0; i < lines.length; i++) {
                 		var elements = lines[i].split(/\s/);
                 		if (elements.length > 2) {
-                			  var claws_tag = elements[2].substr(1);
-                			  var biber_tag = elements[1].substr(1);
+                			  var claws_tag = elements[2];
+                			  var biber_tag = elements[1];
                 			  if (elements[0] == '<p>') {
                 				  text = text + '</p>';
                 				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;p&gt;</a></p>';
