@@ -87,21 +87,26 @@
                 		var text = '<p>';
                 		var lines = output.split(/\n+/);
                 		for (i = 0; i < lines.length; i++) {
-                			var elements = lines[i].split(/\s/);
-                			var claws_tag = elements[2].substr(1);
-                			var biber_tag = elements[1].substr(1);
-                			if (elements[0] == '<p>') {
-                				text = text + '</p>';
-                				text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;p&gt;</a></p>';
-                				token_nbr += 1;
-                				text = text + '<p>';
-                			} else if (elements[0] == '<h>') {
-                				text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;h&gt;</a></p>';
-                				token_nbr += 1;
+                		var elements = lines[i].split(/\s/);
+                		if (elements.length > 2) {
+                			  var claws_tag = elements[2].substr(1);
+                			  var biber_tag = elements[1].substr(1);
+                			  if (elements[0] == '<p>') {
+                				  text = text + '</p>';
+                				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;p&gt;</a></p>';
+                				  token_nbr += 1;
+                				  text = text + '<p>';
+                			  } else if (elements[0] == '<h>') {
+                				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;h&gt;</a></p>';
+                			  	  token_nbr += 1;
+                			  } else {
+                				  text = text + '<a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[0] + "</a> ";
+                				  token_nbr += 1;
+                			  }
                 			} else {
-                				text = text + '<a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[0] + "</a> ";
-                				token_nbr += 1;
-                			}
+                				elements = lines[i].split(/_/);
+                				text += elements[0] + ' ';
+                				}
                 			
                 		}
                 		document.getElementById('text_window').innerHTML = text;
