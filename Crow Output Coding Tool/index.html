@@ -86,6 +86,9 @@
 		
 		function readText(filePath) {
 		
+				current_sentence = 0;
+				total_sentence_count = 0;
+				meta_data_lines = [];
 				reader = new FileReader();
 				file_name = filePath.files[0].name;
 				var output = ""; //placeholder for text output
@@ -98,7 +101,7 @@
 						var lines = d3.csvParse(output);
 						var text = "";
 						
-						var meta_data_line = 'Filename\tAssignment\tCollege\tCountry\tCourse\tDraft\tGender\tID\tInstitution\tInstructor\tProgram\tSemester\tTOEFL Listening\tTOEFL Speaking\tTOEFL Reading\tTOEFL Writing\tTOEFL Total\tYear\tYear in School\tExcerpt\tCode\tComments\r\n';
+						var meta_data_line = 'Filename\tAssignment\tCollege\tCountry\tCourse\tDraft\tGender\tID\tInstitution\tInstructor\tProgram\tSemester\tTOEFL Listening\tTOEFL Speaking\tTOEFL Reading\tTOEFL Writing\tTOEFL Total\tYear\tYear in School\tText word count\tExcerpt\tCode\tComments\tExcerpt word count\r\n';
 						meta_data_lines.push(meta_data_line);
 						
 						// for each row in the data
@@ -123,16 +126,65 @@
 							meta_data_line += '\t' + lines[i]["TOEFL Total"];
 							meta_data_line += '\t' + lines[i]["Year"];
 							meta_data_line += '\t' + lines[i]["Year in School"];
+							meta_data_line += '\t' + lines[i]["Wordcount"];
 							meta_data_lines.push(meta_data_line);
 							
-							excerpts = lines[i].Excerpt.split("…");
+							// try to get rid of the weird character Shelley was getting
+							// probably a windows thing, clean all non-ascii characters
+							// this makes the tool valid only for English
+							whole_excerpt = lines[i].Excerpt.replace(/[^\x00-\x7F]/g, '');
+							excerpts = whole_excerpt.split("…");
 							for (k = 0; k < excerpts.length; k++) {
 								if (excerpts[k] != '') {
-									total_sentence_count += 1;		
-    								text += '<a href="#" class="conc_highlight" id="s' + 
-    									total_sentence_count + '">' + total_sentence_count + "</a> ..." + 
-    									'<a href="#" tag="" metaline="' + (i+1) + '" data-comments="" class="no_highlight" id="' + total_sentence_count + '" onclick="openTag(this);return false;">' + 
-    									excerpts[k] + '...</a><br> ';
+								
+									this_excerpt = excerpts[k];
+									// split excerpt by sentence
+									this_excerpt = this_excerpt.replace(/</g,'&lt');
+									this_excerpt = this_excerpt.replace(/>/g,'&gt');
+									this_excerpt = this_excerpt.replace(/[\u201C\u201D]/g,'"');
+									this_excerpt = this_excerpt.replace(/[\u2018\u2019]/g, "'");
+									this_excerpt = this_excerpt.replace(/([;\.\!\?]"?)([A-Z][a-z]+)/g,'$1 $2');
+									this_excerpt = this_excerpt.replace(/([;\.\!\?]\s+)/g,'$1 <s>');
+									this_excerpt = this_excerpt.replace(/([\.]"\s+)/g,'$1 <s>');
+									this_excerpt = this_excerpt.replace(/([\s|,|\(]\s*para\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/([\s|,]\s*pa?g?\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/([\s|,]\s*[vV]ol\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/(\s+et\s+al\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/(\s+[A-Z]\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/(Dr\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/(Mr\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/(Mrs\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/(Ms\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/([A-Z]\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/([pP]rof\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/(\."\s+)<s>(\s*\(.+\)\s+)/g,'$1 $2 <s>');
+									this_excerpt = this_excerpt.replace(/([\s+\(][A-Z]\.\s*[A-Z]\.\s+)<s>/g,'$1');
+									this_excerpt = this_excerpt.replace(/(\."\s+\(pa?g?r?a?\.\s+)<s>([0-9]+\))(\s+[A-Z])/g,'$1 $2 <s> $3');
+									this_excerpt = this_excerpt.replace(/(\."\s+)<s>(\(pa?g?r?a?\.\s+[0-9]+\))(\s+[A-Z])/g,'$1 $2 <s> $3');
+									this_excerpt = this_excerpt.replace(/(\)\s+)<s>([a-z])/g,'$1 $2');
+									this_excerpt = this_excerpt.replace(/(\s+[aA]rt\.\s+)<s>([0-9])/g,'$1 $2');
+									var sentences = this_excerpt.split(/<s>/); 
+								
+									
+									for (n = 0; n < sentences.length; n++) {
+										total_sentence_count += 1;		
+    									text += '<a href="#" class="conc_highlight" id="s' + 
+    										total_sentence_count + '">' + total_sentence_count + "</a> ";
+    									text += ' <a href="#" tag="" metaline="' + (i+1) + '" data-comments="" class="no_highlight" id="' + total_sentence_count + '" onclick="openTag(this);return false;"> ';
+    									if (n == 0) {
+    										text += '...';
+    									}	
+    									text += sentences[n];
+    									if (n == (sentences.length-1)) {
+    										text += '... </a>';
+    									} else {
+    										text += '</a><br>';
+    									}
+									
+									}
+									text += '<hr>';
+								
+									
     							}
     						}
 						}
@@ -156,7 +208,14 @@
 				
 					if (sentence != null) {
 						var tag = sentence.getAttribute('tag');
-						content +=  meta_data_lines[Number(sentence.getAttribute("metaline"))] + '\t' + sentence.innerHTML.replace(/\r?\n/g,' ') + '\t' + tag + '\t' + sentence.getAttribute("data-comments").replace(/\n/g,' ') + "\r\n"; 
+						content +=  meta_data_lines[Number(sentence.getAttribute("metaline"))] + '\t';
+						this_clean_sentence = sentence.innerHTML.replace(/\r?\n/g,' ');
+						this_clean_sentence =  this_clean_sentence.replace(/\s+/g,' ');
+						this_clean_sentence =  this_clean_sentence.replace(/\.\.\.\s+/g,'... ');
+						this_clean_sentence =  this_clean_sentence.replace(/\s+\.\.\./g,' ...');
+						content +=  this_clean_sentence + '\t' + tag + '\t' + sentence.getAttribute("data-comments").replace(/\n/g,' '); 
+						var spaceCount = this_clean_sentence.split(" ").length - 2;
+						content += '\t' + spaceCount + "\r\n"; 
 					}
 				}
 			
