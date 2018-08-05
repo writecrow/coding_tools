@@ -55,7 +55,7 @@
 			current_token = e.id;
 			e.className = 'main_highlight';
 			token = e.innerHTML;
-			this_text = '<p> JJ(S)_ATTRADJA = attributive adjective<br>WDT_THATREL = relative clause <br>IN_VERBTHATIN =  verb complement <br>IN_FINADVB = verb complement </p>';
+			this_text = '<a href="#" class="button" onclick="open_legend();">View Label Legend</a>';
 			this_text += '<hr>';
 			this_text += ' Tags for the token <b>' + token + '</b> ';
 			this_text += '<table>';
@@ -69,11 +69,45 @@
 		
 		function readText(filePath) {
 		
-				var target_tags = ['JJ_ATTRADJA', 
+				var target_tags = ['IN_VERBTHATIN',
+									'MINUSLRBMINUS_VERBTHATIN',
+									'SINV_VERBTHATIN',
+									'VP_VERBTHATIN_VERBTHATIN',
+									'VP_VERBTHATIN',
+									'S_VERBTHATS',
+									'VP_VERBTHATIN_VERBWH again multiple',
+									'VP_VERBWH_VERBTHATS',
+									'VP_VERBTHATS',
+									'ADVP_VERBWH',
+									'VP_VERBWH',
+									'WHADVP_VERBWH',
+									'WHNP_VERBWH',
+									'NNS_NNTH_IN',
+									'NNS_NNTH_WDT',
+									'NN_NNTH_IN',
+									'NN_NNTH_WDT',
+									'NPMINUSTMP_THATREL',
+									'NP_THATREL',
+									'WRB_WHADVPREL',
+									'NP_WHADVPREL',
+									'NP_WHADVPREL_WHADVPREL',
+									'NP_WHREL',
+									'WP_WHREL',
+									'JJ_ATTRADJA',
+									'JJR_ATTRADJA',
 									'JJS_ATTRADJA',
-									'WDT_THATREL', 
-									'IN_VERBTHATIN', 
-									'IN_FINADVB'];
+									'VBG_ATTRADJA added the VBG as discussed in the Legend',
+									'ADJP_ATTRADJB',
+									'ADJP_ATTRADJB_ATTRADJB',
+									'ADJP_ATTRADJB_ATTRADJB_ATTRADJB',
+									'ADJP_ATTRADJB_ATTRADJB_ATTRADJB_ATTRADJB',
+									'JJR_ATTRADJB',
+									'JJS_ATTRADJB',
+									'JJ_ATTRADJB',
+									'WHADJP_ATTRADJB',
+									'JJR_ATTRADJC',
+									'JJS_ATTRADJC',
+									'JJ_ATTRADJC'];
 				reader = new FileReader();
 				file_name = filePath.files[0].name;
 				var output = ""; //placeholder for text output
@@ -140,6 +174,20 @@
 				saveAs(blob, newfilename);
 	
 		    }
+		    
+		function close_legend() {
+			document.getElementById('legend_box_shadow').style.display = 'none';
+			document.getElementById('legend_box').style.display = 'none';
+			document.getElementById('legend_box_close').style.display = 'none';
+		
+		}
+		
+		function open_legend() {
+			document.getElementById('legend_box_shadow').style.display = 'inline';
+			document.getElementById('legend_box').style.display = 'inline';
+			document.getElementById('legend_box_close').style.display = 'inline';
+		
+		}
 		</script>
 
   </head>
@@ -172,11 +220,7 @@
 	
 	<div id="text_window" class="text_window"></div>
 	<div id="info_box" class="info_box">
-	<p> JJ(S)_ATTRADJA = attributive adjective <br> 
-	WDT_THATREL = relative clause <br>
-	IN_VERBTHATIN =  verb complement <br>
-	IN_FINADVB = verb complement </p>
-	
+		<a href="#" class="button" onclick="open_legend();">View Label Legend</a>
 	</div>
 	
 	<div id="bottom_bar" class="bottom_bar">
@@ -188,6 +232,72 @@
 	<a href="#" class="button" onclick="scrollUp();return false;"> &uarr;</a> <a href="#" class="button" onclick="scrollDown();return false;">&darr;</a>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="button" onclick="previous();return false;"> &lt;&lt; previous token </a> <a href="#" class="button" onclick="next();return false;"> next token &gt;&gt; </a>
 	
+	</div>
+	<div id="legend_box_shadow" class="legend_box_shadow"></div>
+	<div id="legend_box" class="legend_box">
+		<p>finite complement verb plus 'that' clauses, case BA<br>
+		IN_VERBTHATIN<br>
+		MINUSLRBMINUS_VERBTHATIN<br>
+		SINV_VERBTHATIN<br>
+		VP_VERBTHATIN_VERBTHATIN<br>
+		VP_VERBTHATIN</p>
+
+		<p>finite complement verb plus 'that' clauses, case BB<br>
+		S_VERBTHATS<br>
+		VP_VERBTHATIN_VERBWH again multiple<br>
+		VP_VERBWH_VERBTHATS<br>
+		VP_VERBTHATS</p>
+
+		<p>verb plus 'what' case C<br>
+		ADVP_VERBWH<br>
+		VP_VERBWH<br>
+		WHADVP_VERBWH<br>
+		WHNP_VERBWH</p>
+
+		<p>noun plus 'that' case E<br>
+		NNS_NNTH_IN<br>
+		NNS_NNTH_WDT<br>
+		NN_NNTH_IN<br>
+		NN_NNTH_WDT</p>
+
+		<p>finite noun modifier clauses, that releative case F<br>
+		NPMINUSTMP_THATREL<br>
+		NP_THATREL<br>
+		WDT_THATREL</p>
+
+		<p>finite noun modifier clauses, WH releative case G<br>
+		WRB_WHADVPREL<br>
+		NP_WHADVPREL<br>
+		NP_WHADVPREL_WHADVPREL<br>
+		NP_WHREL<br>
+		WP_WHREL</p>
+
+		<p>attributive adjectives, case JA<br>
+		JJ_ATTRADJA<br>
+		JJR_ATTRADJA<br>
+		JJS_ATTRADJA<br>
+		VBG_ATTRADJA added the VBG as discussed in the Legend</p>
+
+		<p>attributive adjectives, case JB<br>
+		ADJP_ATTRADJB<br>
+		ADJP_ATTRADJB_ATTRADJB<br>
+		ADJP_ATTRADJB_ATTRADJB_ATTRADJB<br>
+		ADJP_ATTRADJB_ATTRADJB_ATTRADJB_ATTRADJB<br>
+		JJR_ATTRADJB<br>
+		JJS_ATTRADJB<br>
+		JJ_ATTRADJB<br>
+		WHADJP_ATTRADJB</p>
+
+		<p>attributive adjectives, case JC<br>
+		JJR_ATTRADJC<br>
+		JJS_ATTRADJC<br>
+		JJ_ATTRADJC</p>
+
+	
+	
+	</div>
+	<div id="legend_box_close" class="legend_box_close" onclick="close_legend()">
+		<a href="#" class="button" onclick="close_legend();">X Close Legend</a>
 	</div>
   </body>
 </html>	

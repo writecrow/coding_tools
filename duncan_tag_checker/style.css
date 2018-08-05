@@ -129,10 +129,50 @@ div.info_box {
 	bottom: 60px;
 	padding: 10px;
 	overflow: auto;
-	font-size: 20px;
 	font-family: verdana;
 	font-size: 16px;
 
+}
+
+div.legend_box {
+	background-color: #F0F0F0;
+	position: absolute;
+	top: 100px;
+	left: 100px;
+	right: 100px;
+	bottom: 100px;
+	padding: 10px;
+	overflow: auto;
+	font-family: verdana;
+	font-size: 16px;
+	display: none;
+
+}
+
+div.legend_box_shadow {
+	background-color: #999999;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	display: none;
+	opacity: .7;
+}
+
+div.legend_box_close {
+	background-color: #333333;
+	position: absolute;
+	top: 100px;
+	right: 100px;
+	height: 40px;
+	width: 170px;
+	font-family: verdana;
+	font-size: 16px;
+	color: white;
+	padding: 10px 10px;
+    text-align: center;
+    display: none;
 }
 
 .button {
