@@ -130,10 +130,10 @@
                 					
                 					if (target) {
                 						filtered_tokens.push(token_nbr);
-                						text += '<a href="#" id="' + token_nbr + '" tag="'+ elements[6] + '" new_tag=" " class="conc_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[7] + '</a> ';
+                						text += '<a href="#" id="' + token_nbr + '" target-feature="yes" tag="'+ elements[6] + '" new_tag=" " class="conc_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[7] + '</a> ';
                 						token_nbr += 1;
                 					} else {
-                						text += '<a href="#" id="' + token_nbr + '" tag="'+ elements[6] + '" new_tag=" " class="not_highlight" data-comments="" onclick="return false;">' + elements[7] + '</a> ';
+                						text += '<a href="#" id="' + token_nbr + '" target-feature=" " tag="'+ elements[6] + '" new_tag=" " class="not_highlight" data-comments="" onclick="return false;">' + elements[7] + '</a> ';
                 						token_nbr += 1;
                 					}
                 				}
@@ -152,7 +152,7 @@
         }
         
         function exportData() {
-		        var content = "Token\tTag\tnew_tag\tComments\r\n";
+		        var content = "Token\tTag\tnew_tag\ttarget_feature\tComments\r\n";
 						
 				for (var i = 0, length = total_token_count; i < length; i++) {
 				
@@ -162,7 +162,7 @@
 						var new_tag = token.getAttribute('new_tag');
 						var clean_token = token.innerHTML;
 						content +=  clean_token + "\t" + token.getAttribute('tag') + "\t" + 
-						new_tag + "\t" + token.getAttribute("data-comments").replace(/\n/g,' ') + "\r\n";
+						new_tag + "\t" + token.getAttribute("target-feature") + "\t" + token.getAttribute("data-comments").replace(/\n/g,' ') + "\r\n";
 						} 
 					}
 			
