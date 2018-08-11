@@ -130,10 +130,10 @@
                 					
                 					if (target) {
                 						filtered_tokens.push(token_nbr);
-                						text += '<a href="#" id="' + token_nbr + '" target-feature="yes" tag="'+ elements[6] + '" new_tag=" " class="conc_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[7] + '</a> ';
+                						text += '<a href="#" id="' + token_nbr + '" target-feature="1" tag="'+ elements[6] + '" new_tag=" " class="conc_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[7] + '</a> ';
                 						token_nbr += 1;
                 					} else {
-                						text += '<a href="#" id="' + token_nbr + '" target-feature=" " tag="'+ elements[6] + '" new_tag=" " class="not_highlight" data-comments="" onclick="return false;">' + elements[7] + '</a> ';
+                						text += '<a href="#" id="' + token_nbr + '" target-feature="0" tag="'+ elements[6] + '" new_tag=" " class="not_highlight" data-comments="" onclick="return false;">' + elements[7] + '</a> ';
                 						token_nbr += 1;
                 					}
                 				}

@@ -115,10 +115,10 @@
                 				}
 								if (target) {
 									filtered_tokens.push(token_nbr);
-                					text +='<a href="#" id="' + token_nbr + '" tag1="'+ lines[i].tag1 + '" tag2="' + lines[i].tag2 + '" this_token="' + lines[i].token_number + '" dep_token="' + lines[i].dep + '" interp="' + interpretation + '" dep_tag="" dep_label="' + lines[i].dep_label + '" new_tag="++++" class="conc_highlight" data-comments="" onclick="openTag(this);return false;">' + lines[i].token + '</a> ';
+                					text +='<a href="#" id="' + token_nbr + '"  target-feature="1" tag1="'+ lines[i].tag1 + '" tag2="' + lines[i].tag2 + '" this_token="' + lines[i].token_number + '" dep_token="' + lines[i].dep + '" interp="' + interpretation + '" dep_tag="" dep_label="' + lines[i].dep_label + '" new_tag="++++" class="conc_highlight" data-comments="" onclick="openTag(this);return false;">' + lines[i].token + '</a> ';
                 					token_nbr += 1;
                 				} else {
-                					text +='<a href="#" id="' + token_nbr + '" tag1="'+ lines[i].tag1 + '" tag2="' + lines[i].tag2 + '" this_token="' + lines[i].token_number + '" dep_token="' + lines[i].dep + '" dep_tag="" dep_label="' + lines[i].dep_label + '" new_tag="++++" class="not_highlight" data-comments="" onclick="return false;">' + lines[i].token + '</a> ';
+                					text +='<a href="#" id="' + token_nbr + '"  target-feature="0" tag1="'+ lines[i].tag1 + '" tag2="' + lines[i].tag2 + '" this_token="' + lines[i].token_number + '" dep_token="' + lines[i].dep + '" dep_tag="" dep_label="' + lines[i].dep_label + '" new_tag="++++" class="not_highlight" data-comments="" onclick="return false;">' + lines[i].token + '</a> ';
                 					token_nbr += 1;
                 				}		
                 					
@@ -137,7 +137,7 @@
         }
         
         function exportData() {
-		        var content = "Token\tTag1\tTag2\tDep_label\tInterpretation\tnew_tag\tComments\r\n";
+		        var content = "Token\tTag1\tTag2\tDep_label\tInterpretation\tnew_tag\ttarget_feature\tComments\r\n";
 				
 						
 				for (var i = 0, length = total_token_count; i < length; i++) {
@@ -152,6 +152,7 @@
 						content +=  clean_token + "\t" + token.getAttribute('tag1') + "\t" + 
 						token.getAttribute('tag2')  + "\t" + token.getAttribute('dep_label') + 
 						"\t" + token.getAttribute('interp') + "\t" + new_tag + 
+						"\t" + token.getAttribute("target-feature") +
 						"\t" + token.getAttribute("data-comments").replace(/\n/g,' ') + "\r\n";
 						} 
 					}

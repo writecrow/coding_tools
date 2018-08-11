@@ -81,14 +81,15 @@
 			for (var i = 0, length = total_token_count; i < length; i++) {
 				var token = document.getElementById(i);
 				var this_biber = token.getAttribute('biber');
+				var filter = /nns?\+|npl|npt/
 				//if current token is a noun
-				if (this_biber.match(/nns?\+/)) {
+				if (this_biber.match(filter)) {
 					//if this is not the last token in the text
 					if (i < total_token_count-1) {
 						var next_token = document.getElementById(i+1);
 						if (next_token != null) {
 							var next_biber = next_token.getAttribute('biber');
-							if (next_biber.match(/nns?\+/)) {
+							if (next_biber.match(filter)) {
 								token.className = 'conc_highlight';
 								var old_tags = token.getAttribute('biber').split('+');
 								var new_tag = old_tags[0] + '+' + old_tags[1] + '+nnsqnc+' + old_tags[3] + '+' + old_tags[4];
@@ -173,7 +174,7 @@
         }
         
         function exportData() {
-		        var content = "Token\tOriginal_Biber_Tag\tNew_Biber_Tag\tTarget_tag\tModified?\tComments\r\n";
+		        var content = "Token\tOriginal_Biber_Tag\tNew_Biber_Tag\ttarget_feature\tmodified?\tComments\r\n";
 				
 						
 				for (var i = 0, length = total_token_count; i < length; i++) {
