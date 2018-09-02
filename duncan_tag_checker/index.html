@@ -75,17 +75,13 @@
 									'VP_VERBTHATIN_VERBTHATIN',
 									'VP_VERBTHATIN',
 									'S_VERBTHATS',
-									'VP_VERBTHATIN_VERBWH again multiple',
+									'VP_VERBTHATIN_VERBWH',
 									'VP_VERBWH_VERBTHATS',
 									'VP_VERBTHATS',
 									'ADVP_VERBWH',
 									'VP_VERBWH',
 									'WHADVP_VERBWH',
 									'WHNP_VERBWH',
-									'NNS_NNTH_IN',
-									'NNS_NNTH_WDT',
-									'NN_NNTH_IN',
-									'NN_NNTH_WDT',
 									'NPMINUSTMP_THATREL',
 									'NP_THATREL',
 									'WRB_WHADVPREL',
@@ -108,10 +104,22 @@
 									'JJR_ATTRADJC',
 									'JJS_ATTRADJC',
 									'JJ_ATTRADJC',
-									'WDT_THATREL'];
+									'WDT_THATREL',
+									'NN_NOMPRE',
+									'NNS_NOMPRE',
+									'NNP_NOMPRE',
+									'NNPS_NOMPRE'];
+									
+				var dislocated_target_tags = ['NNS_NNTH_IN',
+									'NNS_NNTH_WDT',
+									'NN_NNTH_IN',
+									'NN_NNTH_WDT']
+									
 				reader = new FileReader();
 				file_name = filePath.files[0].name;
 				var output = ""; //placeholder for text output
+				var next_target = false;
+				var previous_tag = '';
 				token_nbr = 0;
 				if(filePath.files && filePath.files[0]) {           
             		reader.onload = function (e) {
@@ -129,12 +137,32 @@
                 						target = true;
                 					}
                 					
+                					if (next_target) {
+                						target = true;
+                						actual_tag = previous_tag;
+                					} else {
+                						actual_tag = elements[6];
+                					}
+                					if (dislocated_target_tags.includes(elements[6])) {
+                						next_target = true;
+                					} else {
+                						next_target = false;
+                					}
+                					
+                					if (previous_tag == 'NN_NOMPRE' | previous_tag == 'NNS_NOMPRE' | previous_tag == 'NNP_NOMPRE') {
+                						if (elements[6] == 'NN_NOMPRE' | elements[6] == 'NNS_NOMPRE' | elements[6] == 'NNP_NOMPRE') {
+                							target = false;
+                						}
+                					}
+                					
+                					previous_tag = elements[6];
+                					
                 					if (target) {
                 						filtered_tokens.push(token_nbr);
-                						text += '<a href="#" id="' + token_nbr + '" target-feature="1" tag="'+ elements[6] + '" new_tag=" " class="conc_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[7] + '</a> ';
+                						text += '<a href="#" id="' + token_nbr + '" target-feature="1" tag="'+ actual_tag + '" new_tag=" " class="conc_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[7] + '</a> ';
                 						token_nbr += 1;
                 					} else {
-                						text += '<a href="#" id="' + token_nbr + '" target-feature="0" tag="'+ elements[6] + '" new_tag=" " class="not_highlight" data-comments="" onclick="return false;">' + elements[7] + '</a> ';
+                						text += '<a href="#" id="' + token_nbr + '" target-feature="0" tag="'+ actual_tag + '" new_tag=" " class="not_highlight" data-comments="" onclick="return false;">' + elements[7] + '</a> ';
                 						token_nbr += 1;
                 					}
                 				}
