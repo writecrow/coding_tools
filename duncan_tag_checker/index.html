@@ -108,6 +108,15 @@
 									'NN_NOMPRE',
 									'NNS_NOMPRE',
 									'NNP_NOMPRE',
+									'NNPS_NOMPRE',
+									'NN_NOMPRE_NOMPRE',
+									'NNS_NOMPRE_NOMPRE',
+									'NNP_NOMPRE_NOMPRE',
+									'NNPS_NOMPRE_NOMPRE'];
+									
+				var noun_seq_labels = ['NN_NOMPRE',
+									'NNS_NOMPRE',
+									'NNP_NOMPRE',
 									'NNPS_NOMPRE'];
 									
 				var dislocated_target_tags = ['NNS_NNTH_IN',
@@ -149,8 +158,8 @@
                 						next_target = false;
                 					}
                 					
-                					if (previous_tag == 'NN_NOMPRE' | previous_tag == 'NNS_NOMPRE' | previous_tag == 'NNP_NOMPRE' | previous_tag == 'NNPS_NOMPRE') {
-                						if (elements[6] == 'NN_NOMPRE' | elements[6] == 'NNS_NOMPRE' | elements[6] == 'NNP_NOMPRE'| elements[6] == 'NNPS_NOMPRE') {
+                					if (noun_seq_labels.includes(previous_tag) {
+                						if (noun_seq_labels.includes(elements[6]) {
                 							if ((i+1) < lines.length) { 
                 								next_tag = lines[i+1].split(' ')[6];
                 								if (next_tag != 'NN_NOMPRE' & next_tag != 'NNS_NOMPRE' & next_tag != 'NNP_NOMPRE' & next_tag != 'NNPS_NOMPRE') {
