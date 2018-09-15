@@ -100,7 +100,7 @@
                 			if (lines[i].token) {
                 				var target = false;
                 				var interpretation = '';
-                				if (lines[i].tag2 == 'WDT') {
+                				if (lines[i].tag2 == 'WDT'| (lines[i].tag2 == 'WP' & lines[i].dep_label.includes('nsubj'))) {
                 					target = true;
                 					interpretation = 'relative clause';
                 				} else if (lines[i].tag1 == 'ADJ' & lines[i].dep_label == 'amod') {

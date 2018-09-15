@@ -100,16 +100,16 @@
                 			if (lines[i].token) {
                 				var target = false;
                 				var interpretation = '';
-                				if (lines[i].tag2 == 'WDT') {
+                				if (lines[i].tag1 == 'WDT' | (lines[i].tag1 == 'WP' & lines[i].dep_label.includes('nsubj'))) {
                 					target = true;
                 					interpretation = 'relative clause';
-                				} else if (lines[i].tag1 == 'JJ' & lines[i].dep_label == 'amod') {
+                				} else if ((lines[i].tag1 == 'JJ' | lines[i].tag1 == 'VBG')& lines[i].dep_label == 'amod') {
                 					target = true;
                 					interpretation = 'attributive adjective';
                 				} else if (lines[i].token == 'that' & lines[i].tag1 == 'IN' & lines[i].dep_label == 'mark') {
                 					target = true;
                 					interpretation = 'complement clause';
-                				} else if (lines[i].tag1 != 'NNP' & lines[i].dep_label == 'compound') {
+                				} else if (lines[i].tag1 != 'NNP' & lines[i].tag1 != 'NNPS' & lines[i].dep_label == 'compound') {
                 					target = true;
                 					interpretation = 'noun sequence';
                 				}
@@ -128,7 +128,7 @@
                 		document.getElementById('text_window').innerHTML = text;
                 		total_token_count = token_nbr;
                 		current_token = filtered_tokens[0];
-                		document.getElementById('filename').value = file_name.replace(/\.\w+/g,'') + "_malttagchecked.txt";
+                		document.getElementById('filename').value = file_name.replace(/\.\w+/g,'') + "_stanfordtagchecked.txt";
                 		document.getElementById('button_bar').style.display = 'inline';
 				
 					};
