@@ -113,6 +113,7 @@
                 		document.getElementById('text_window').innerHTML = text;
                 		total_token_count = token_nbr;
                 		document.getElementById('filename').value = file_name.replace(/\.txt/g,'') + "_tagchecked.txt";
+                		document.getElementById('info_box').innerHTML = "Click on a token/word on the text to start tag checking.";
 				
 					};
 				reader.readAsText(filePath.files[0]);
@@ -173,7 +174,7 @@
 	</div>
 	
 	<div id="text_window" class="text_window"></div>
-	<div id="info_box" class="info_box">Click on a token on the text to start tag checking</div>
+	<div id="info_box" class="info_box">Load a text to start tag checking</div>
 	
 	<div id="bottom_bar" class="bottom_bar">
 	
