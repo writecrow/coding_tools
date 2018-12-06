@@ -114,7 +114,7 @@
                 		}
                 		document.getElementById('text_window').innerHTML = text;
                 		total_token_count = token_nbr;
-                		document.getElementById('filename').value = file_name.replace(/\.txt/g,'') + "_tagchecked.txt";
+                		document.getElementById('filename').value = file_name.replace(/\.txt|\.tec/g,'') + "_tagchecked.txt";
                 		document.getElementById('info_box').innerHTML = "Click on a token/word on the text to start tag checking.";
 				
 					};
