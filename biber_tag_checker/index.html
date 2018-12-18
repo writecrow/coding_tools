@@ -10,13 +10,198 @@
 		
 		var current_token = 0;
 		var total_token_count = 0;
+		var tag0_dict = {
+  				"Y": "punctuation",
+  				"FO": "formula symbol",
+  				"FW": "foreign word",
+  				"G": "genitive marker",
+  				"D": "determiner",
+  				"DET": "determiner", //this was not in the spreadsheet but it is in the data
+  				"C": "conjunction",
+  				"M": "number",
+  				"N": "noun",
+  				"P": "pronoun",
+  				"I": "preposition",
+  				"J": "adjective",
+  				"VM": "modal verb",
+  				"R": "adverb",
+  				"C_": "conjunction",
+  				"TO": "infinitive marker",
+  				"UH": "interjection/filler",
+  				"VA": "auxiliary verb",
+  				"VL": "lexical verb",
+  				"XX": "not",
+  				"EX": "existential there",
+  				"ZZ": "letter of the alphabet",
+  				"ERROR": "error",
+  				"H": "markup"
+		};
+		
+		var tag1_dict = {
+  				"CM": "common",
+  				"PR": "proper",
+  				"ED": "past tense",
+  				"EN": "past participle",
+  				"ING": "present participle",
+  				"BF": "base form",
+  				"Z": "third person",
+  				"INF": "infinitive",
+  				"AM": "am",
+  				"AI": "ain't",
+  				"PER": "personal",
+  				"IMPR": "impersonal",
+  				"SRD": "subordinator",
+  				"CRD": "coordinator",
+  				"AT": "article",
+  				"DEM": "demonstrative",
+  				"F": "fraction",
+  				"T": "time",
+  				"ORD": "ordinal",
+  				"CARD": "cardinal",
+  				"CJ": "conjunction",
+  				"PART": "particle",
+  				"COM": "comma",
+  				"SCOL": "semicolon",
+  				"COL": "colon",
+  				"QM": "question mark",
+  				"EXCL": "exclamation mark",
+  				"PRD": "period",
+  				"PAR": "parenthesis",
+  				"APO": "apostrophe",
+  				"QUO": "quotation mark",
+  				"DSH": "dash / hyphen",
+  				"ELIP": "ellipsis",
+  				"BRAC": "bracket",
+  				"DOL": "dollar sign",
+  				"HASH": "pound sign / hash tag",
+  				"PCT": "percent sign",
+  				"EMDSH": "emdash",
+  				"ENDSH": "endash"};
+  				
+		var tag2_dict = {
+  				"SING": "Number - singular",
+  				"PLUR": "Number - plural",
+  				"NEUT": "Number - neutral for number",
+  				"THT": "Clause Head Type - that",
+  				"WH": "Clause Head Type - what",
+  				"PRF": "perfect",
+  				"PRG": "progressive",
+  				"DOUB": "Determiner Subcategory - double",
+  				"PSV": "passive voice",
+  				"PRDV": "Syntactic Role - predicative",
+  				"ATRB": "Syntactic Role - attributive",
+  				"PHRS": "phrasal coordination",
+  				"CLP": "Position of Punctuation - clause final",
+  				"LEFT": "Position of Punctuation - left",
+  				"RIGHT": "Position of Punctuation - right",
+  				"PHRV": "Multiword Verb Type - phrasal verb particle",
+  				"PPVB": "Multiword Verb Type - prepositional verb"};
+  				
+  		var tag3_dict = {
+  				"1": "first person",
+  				"2": "second person",
+  				"3": "third person",
+  				"CLS": "clausal head",
+  				"COMP": "complement head",
+  				"REL": "relative clause head",
+  				"QUE": "question word",
+  				"ER": "Comparison - comparative",
+  				"EST": "Comparison - superlative",
+  				"DEF": "Reference - definite",
+  				"INDEF": "Reference - indefinite",
+  				"ONE": "Numerical Value - equal to one",
+  				"MORE": "Numerical Value - greater than one",
+  				"PNM": "Type of Passive	- post nominal modifier",
+  				"AGLS": "Type of Passive - agentless",
+  				"BY": "Type of Passive	- agentive",
+  				"NOM": "Derivation - nominalization",
+  				"COP": "Valency - copular"};
+  				
+  		var tag4_dict = {
+  				"GE": "genitive",
+  				"PRO": "pronominal function",
+  				"S": "Type of Pronoun - subject",
+  				"O": "Type of Pronoun - object",
+  				"X": "Type of Pronoun - reflexive",
+  				"V": "possessive (pronoun or determiner)",
+  				"OBJ": "object gap",
+  				"SUBJ": "subject gap",
+  				"VERB": "Compl Clause Controller - verb",
+  				"NOUN": "Compl Clause Controller - noun",
+  				"ADJ": "Compl Clause Controller - adjective",
+  				"PREP": "Compl Clause Controller - preposition",
+  				"ADVL": "Compl Clause Controller - CC functions as adverbial",
+  				"CONT": "contracted",
+  				"HYPH": "hyphenated",
+  				"SPLT": "inserted between main verb and aux verb"};
+  				
+  		var tag5_dict = {
+  				"PIED": "Position - pied piping",
+  				"PMOD": "Position - noun premodifier",
+  				"APP": "Position - appositive",
+  				"EVER": "WH-Word Ending: -ever ending",
+  				"ONLY": "only occuring in attributive form",
+  				"STNC": "Semantic Domain - stance",
+  				"CAUS": "Semantic Domain - causal",
+  				"CND": "Semantic Domain - conditional",
+  				"PRDN": "Semantic Domain - prediction",
+  				"POS": "Semantic Domain - possibility",
+  				"NEC": "Semantic Domain - necessity",
+  				"CONC": "Semantic Domain - concession",
+  				"DAY": "Semantic Domain - day",
+  				"MON": "Semantic Domain - month",
+  				"TIME": "Semantic Domain - temporal",
+  				"DIR": "Semantic Domain - direction",
+  				"LOC": "Semantic Domain - location",
+  				"ADVS": "Semantic Domain - adversative",
+  				"U": "Semantic Domain - unit of measurement",
+  				"BE": "form of be",
+  				"HV": "form of have",
+  				"DO": "form of do",
+  				"THDEL": "that-deletion",
+  				"BINF": "bare infinitive complement clause",
+  				"A": "after something",
+  				"B": "before something"};
+  				
+  		var tag6_dict = {	
+  				"EXT": "extraposed",
+  				"MULTI": "multiword"};
 		
 		function includeComments(e) {
 			document.getElementById(current_token).setAttribute("data-comments", e.value);
 		}
 		
 		function setNewTag() {
-			var new_tag = document.getElementById('field1').value + '+' + document.getElementById('field2').value +  '+' + document.getElementById('field3').value + '+' + document.getElementById('field4').value + '+' + document.getElementById('field5').value + '+' + document.getElementById('field6').value + '+' + document.getElementById('field7').value;
+			var e1 = document.getElementById('field1');
+			var field1_value = e1.options[e1.selectedIndex].value;
+			var new_tag = field1_value + '+';
+			
+			
+			var e2 = document.getElementById('field2');
+			var field2_value = e2.options[e2.selectedIndex].value;
+			new_tag += field2_value +  '+';
+			
+			var e3 = document.getElementById('field3');
+			var field3_value = e3.options[e3.selectedIndex].value;
+			new_tag += field3_value +  '+';
+			
+			var e4 = document.getElementById('field4');
+			var field4_value = e4.options[e4.selectedIndex].value;
+			new_tag += field4_value +  '+';
+			
+			var e5 = document.getElementById('field5');
+			var field5_value = e5.options[e5.selectedIndex].value;
+			new_tag += field5_value +  '+';
+			
+			var e6 = document.getElementById('field6');
+			var field6_value = e6.options[e6.selectedIndex].value;
+			new_tag += field6_value +  '+';
+			
+			var e7 = document.getElementById('field7');
+			var field7_value = e7.options[e7.selectedIndex].value;
+			new_tag += field7_value;
+
+			
 			document.getElementById(current_token).setAttribute('new_biber', new_tag);
 		}
 		
@@ -50,29 +235,244 @@
 			openTag(document.getElementById(current_token));
 		}
 		
+		function getOptionsField1() {
+			var options = '';
+			options += '<select name="field1" id="field1" onchange="setNewTag();">';
+			options += '<option value="" selected></option>';
+			options += '<option value="Y">(Y) punctuation</option>';
+			options += '<option value="FO">(FO) formula symbol</option>';
+			options += '<option value="FW">(FW) foreign word</option>';
+			options += '<option value="G">(G) genitive marker</option>';
+			options += '<option value="D">(D) determiner</option>';
+			//this was not in the spreadsheet but it is in the data
+			options += '<option value="DET">(DET) determiner</option>'; 
+			options += '<option value="C">(C) conjunction</option>';
+			options += '<option value="M">(M) number</option>';
+			options += '<option value="N">(N) noun</option>';
+			options += '<option value="P">(P) pronoun</option>';
+			options += '<option value="I">(I) preposition</option>';
+			options += '<option value="J">(J) adjective</option>';
+			options += '<option value="VM">(VM) modal verb</option>';
+			options += '<option value="R">(R) adverb</option>';
+			options += '<option value="TO">(TO) infinitive marker</option>';
+			options += '<option value="UH">(UH) interjection/filler</option>';
+			options += '<option value="VA">(VA) auxiliary verb</option>';
+			options += '<option value="VL">(VL) lexical verb</option>';
+			options += '<option value="XX">(XX) not</option>';
+			options += '<option value="EX">(EX) existential there</option>';
+			options += '<option value="ZZ">(ZZ) letter of the alphabet</option>';
+			options += '<option value="ERROR">(ERROR) error</option>';
+			options += '<option value="H">(H) markup</option>';
+  			options += '</select>';
+			return options;
+		};
+		
+		function getOptionsField2() {
+			var options = '';
+			options += '<select name="field2" id="field2" onchange="setNewTag();">';
+			options += '<option value="" selected></option>';
+			options += '<option value="CM">(CM) common</option>';
+			options += '<option value="PR">(PR) proper</option>';
+			options += '<option value="ED">(ED) past tense</option>';
+			options += '<option value="EN">(EN) past participle</option>';
+			options += '<option value="ING">(ING) present participle</option>';
+			options += '<option value="BF">(BF) base form</option>';
+			options += '<option value="Z">(Z) third person</option>';
+			options += '<option value="INF">(INF) infinitive</option>';
+			options += '<option value="AM">(AM) am</option>';
+			options += '<option value="AI">(AI) ain' + "'t</option>";
+			options += '<option value="PER">(PER) personal</option>';
+			options += '<option value="IMPR">(IMPR) impersonal</option>';
+			options += '<option value="SRD">(SRD) subordinator</option>';
+			options += '<option value="CRD">(CRD) coordinator</option>';
+			options += '<option value="AT">(AT) article</option>';
+			options += '<option value="DEM">(DEM) demonstrative</option>';
+			options += '<option value="F">(F) fraction</option>';
+			options += '<option value="T">(T) time</option>';
+			options += '<option value="ORD">(ORD) ordinal</option>';
+			options += '<option value="CARD">(CARD) cardinal</option>';
+			options += '<option value="CJ">(CJ) conjunction</option>';
+			options += '<option value="PART">(PART) particle</option>';
+			options += '<option value="COM">(COM) comma</option>';
+			options += '<option value="SCOL">(SCOL) semicolon</option>';
+			options += '<option value="COL">(COL) colon</option>';
+			options += '<option value="QM">(QM) question mark</option>';
+			options += '<option value="EXCL">(EXCL) exclamation mark</option>';
+			options += '<option value="PRD">(PRD) period</option>';
+			options += '<option value="PAR">(PAR) parenthesis</option>';
+			options += '<option value="APO">(APO) apostrophe</option>';
+			options += '<option value="QUO">(QUO) quotation mark</option>';
+			options += '<option value="DSH">(DSH) dash / hyphen</option>';
+			options += '<option value="ELIP">(ELIP) ellipsis</option>';
+			options += '<option value="BRAC">(BRAC) bracket</option>';
+			options += '<option value="DOL">(DOL) dollar sign</option>';
+			options += '<option value="HASH">(HASH) pound sign / hash tag</option>';
+			options += '<option value="PCT">(PCT) percent sign</option>';
+			options += '<option value="EMDSH"> (EMDSH) emdash</option>';
+			options += '<option value="ENDSH"> (EMDSH) endash</option>';
+  			options += '</select>';
+			return options;
+		};
+		
+		function getOptionsField3() {
+			var options = '';
+			options += '<select name="field3" id="field3" onchange="setNewTag();">';
+			options += '<option value="" selected></option>';
+			options += '<option value="SING">(SING) Number - singular</option>';
+			options += '<option value="PLUR">(PLUR) Number - plural</option>';
+			options += '<option value="NEUT">(NEUT) Number - neutral for number</option>';
+			options += '<option value="THT">(THT) Clause Head Type - that</option>';
+			options += '<option value="WH">(WH) Clause Head Type - what</option>';
+			options += '<option value="PRF">(PRF) perfect</option>';
+			options += '<option value="PRG">(PRG) progressive</option>';
+			options += '<option value="DOUB">(DOUB) Determiner Subcategory - double</option>';
+			options += '<option value="PSV">(PSV) passive voice</option>';
+			options += '<option value="PRDV">(PRDV) Syntactic Role - predicative</option>';
+			options += '<option value="ATRB">(ATRB) Syntactic Role - attributive</option>';
+			options += '<option value="PHRS">(PHRS) phrasal coordination</option>';
+			options += '<option value="CLP">(CLP) Position of Punctuation - clause final</option>';
+			options += '<option value="LEFT">(LEFT) Position of Punctuation - left</option>';
+			options += '<option value="RIGHT">(RIGHT) Position of Punctuation - right</option>';
+			options += '<option value="PHRV">(PHRV) Multiword Verb Type - phrasal verb particle</option>';
+			options += '<option value="PPVB">(PPVB) Multiword Verb Type - prepositional verb</option>';
+  			options += '</select>';
+			return options;
+		};
+		
+		function getOptionsField4() {
+			var options = '';
+			options += '<select name="field4" id="field4" onchange="setNewTag();">';
+			options += '<option value="" selected></option>';
+			options += '<option value="1">(1) first person</option>';
+			options += '<option value="2">(2) second person</option>';
+			options += '<option value="3">(3) third person</option>';
+			options += '<option value="CLS">(CLS) clausal head</option>';
+			options += '<option value="COMP">(COMP) complement head</option>';
+			options += '<option value="REL">(REL) relative clause head</option>';
+			options += '<option value="QUE">(QUE) question word</option>';
+			options += '<option value="ER">(ER) Comparison - comparative</option>';
+			options += '<option value="EST">(EST) Comparison - superlative</option>';
+			options += '<option value="DEF">(DEF) Reference - definite</option>';
+			options += '<option value="INDEF">(INDEF) Reference - indefinite</option>';
+			options += '<option value="ONE">(ONE) Numerical Value - equal to one</option>';
+			options += '<option value="MORE">(MORE) Numerical Value - greater than one</option>';
+			options += '<option value="PNM">(PNM) Type of Passive	- post nominal modifier</option>';
+			options += '<option value="AGLS">(AGLS) Type of Passive - agentless</option>';
+			options += '<option value="BY">(BY) Type of Passive	- agentive</option>';
+			options += '<option value="NOM">(NOM) Derivation - nominalization</option>';
+			options += '<option value="COP">(COP) Valency - copular</option>';
+  			options += '</select>';
+			return options;
+		};
+		
+		function getOptionsField5() {
+			var options = '';
+			options += '<select name="field5" id="field5" onchange="setNewTag();">';
+			options += '<option value="" selected></option>';
+			options += '<option value="GE">(GE) genitive</option>';
+			options += '<option value="PRO">(PRO) pronominal function</option>';
+			options += '<option value="S">(S) Type of Pronoun - subject</option>';
+			options += '<option value="O">(O) Type of Pronoun - object</option>';
+			options += '<option value="X">(X) Type of Pronoun - reflexive</option>';
+			options += '<option value="V">(V) possessive (pronoun or determiner)</option>';
+			options += '<option value="OBJ">(OBJ) object gap</option>';
+			options += '<option value="SUBJ">(SUBJ) subject gap</option>';
+			options += '<option value="VERB">(VERB) Compl Clause Controller - verb</option>';
+			options += '<option value="NOUN">(NOUN) Compl Clause Controller - noun</option>';
+			options += '<option value="ADJ">(ADJ) Compl Clause Controller - adjective</option>';
+			options += '<option value="PREP">(PREP) Compl Clause Controller - preposition</option>';
+			options += '<option value="ADVL">(ADVL) Compl Clause Controller - CC functions as adverbial</option>';
+			options += '<option value="CONT">(CONT) contracted</option>';
+			options += '<option value="HYPH">(HYPH) hyphenated</option>';
+			options += '<option value="SPLT">(SPLT) inserted between main verb and aux verb</option>';
+  			options += '</select>';
+			return options;
+		};
+		
+		function getOptionsField6() {
+			var options = '';
+			options += '<select name="field6" id="field6" onchange="setNewTag();">';
+			options += '<option value="" selected></option>';
+			options += '<option value="PIED">(PIED) Position - pied piping</option>';
+			options += '<option value="PMOD">(PMOD) Position - noun premodifier</option>';
+			options += '<option value="APP">(APP) Position - appositive</option>';
+			options += '<option value="EVER">(EVER) WH-Word Ending: -ever ending</option>';
+			options += '<option value="ONLY">(ONLY) only occuring in attributive form</option>';
+			options += '<option value="STNC">(STNC) Semantic Domain - stance</option>';
+			options += '<option value="CAUS">(CAUS) Semantic Domain - causal</option>';
+			options += '<option value="CND">(CND) Semantic Domain - conditional</option>';
+			options += '<option value="PRDN">(PRDN) Semantic Domain - prediction</option>';
+			options += '<option value="POS">(POS) "Semantic Domain - possibility</option>';
+			options += '<option value="NEC">(NEC) Semantic Domain - necessity</option>';
+			options += '<option value="CONC">(CONC) Semantic Domain - concession</option>';
+			options += '<option value="DAY">(DAY) Semantic Domain - day</option>';
+			options += '<option value="MON">(MON) Semantic Domain - month</option>';
+			options += '<option value="TIME">(TIME) Semantic Domain - temporal</option>';
+			options += '<option value="DIR">(DIR) Semantic Domain - direction</option>';
+			options += '<option value="LOC">(LOC) Semantic Domain - location</option>';
+			options += '<option value="ADVS">(ADVS) Semantic Domain - adversative</option>';
+			options += '<option value="U">(U) Semantic Domain - unit of measurement</option>';
+			options += '<option value="BE">(BE) form of be</option>';
+			options += '<option value="HV">(HV) form of have</option>';
+			options += '<option value="DO">(DO) form of do</option>';
+			options += '<option value="THDEL">(THDEL) that-deletion</option>';
+			options += '<option value="BINF">(BINF) bare infinitive complement clause</option>';
+			options += '<option value="A">(A) after something</option>';
+			options += '<option value="B">(B) before something</option>';
+  			options += '</select>';
+			return options;
+		};
+		
+		function getOptionsField7() {
+			var options = '';
+			options += '<select name="field7" id="field7" onchange="setNewTag();">';
+			options += '<option value="" selected></option>';
+			options += '<option value="EXT">(EXT) extraposed</option>';
+			options += '<option value="MULTI">(MULTI) multiword</option>';
+  			options += '</select>';
+			return options;
+		};
+		
 		function openTag(e) {
 			document.getElementById(current_token).className = 'not_highlight';
 			current_token = e.id;
 			e.className = 'main_highlight';
 			token = e.innerHTML;
+			var biber_tags = e.getAttribute("biber").split("+");
+			
+			var desc0 = '';
+			var desc1 = '';
+			var desc2 = '';
+			var desc3 = '';
+			var desc4 = '';
+			var desc5 = '';
+			var desc6 = '';
+			
+			if (biber_tags[0] != ''){desc0 = tag0_dict[biber_tags[0]];}
+			if (biber_tags[1] != ''){desc1 = tag1_dict[biber_tags[1]];}
+			if (biber_tags[2] != ''){desc2 = tag2_dict[biber_tags[2]];}
+			if (biber_tags[3] != ''){desc3 = tag3_dict[biber_tags[3]];}
+			if (biber_tags[4] != ''){desc4 = tag4_dict[biber_tags[4]];}
+			if (biber_tags[5] != ''){desc5 = tag5_dict[biber_tags[5]];}
+			if (biber_tags[6] != ''){desc6 = tag6_dict[biber_tags[6]];}
+			
 			this_text = '<a href="#" class="button" onclick="previous();return false;"> &lt;&lt; previous token </a>';
 			this_text += ' Tags for the token <b>' + token + '</b> ';
 			this_text += '<a href="#" class="button" onclick="next();return false;"> next token &gt;&gt; </a><br>';
 			this_text += 'CLAWS7: ' + e.getAttribute("claws") + '<br>';
-			var biber_tags = e.getAttribute("biber").split("+");
+			
 			this_text += '<table>';
-			this_text += '<tr><td><form>Biber Field 1: </td><td>' + biber_tags[0] + '</td><td><input type="text" id="field1" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 2: </td><td>' + biber_tags[1] + '</td><td><input type="text" id="field2" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 3: </td><td>' + biber_tags[2] + '</td><td><input type="text" id="field3" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 4: </td><td>' + biber_tags[3] + '</td><td><input type="text" id="field4" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 5: </td><td>' + biber_tags[4] + '</td><td><input type="text" id="field5" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 6: </td><td>' + biber_tags[5] + '</td><td><input type="text" id="field6" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 7: </td><td>' + biber_tags[6] + '</td><td><input type="text" id="field7" onchange="setNewTag();"></form></td></tr>';
+			this_text += '<tr><td><form>Biber Field 1: </td><td>' + biber_tags[0] + '</td><td> | '+ desc0 + '</td><td>'+ getOptionsField1() +'</td></tr>';
+			this_text += '<tr><td>Biber Field 2: </td><td>' + biber_tags[1] +  '</td><td> | '+ desc1 + '</td><td>'+ getOptionsField2() +'</td></tr>';
+			this_text += '<tr><td>Biber Field 3: </td><td>' + biber_tags[2] +  '</td><td> | '+ desc2 + '</td><td>'+ getOptionsField3() +'</td></tr>';
+			this_text += '<tr><td>Biber Field 4: </td><td>' + biber_tags[3] +  '</td><td> | '+ desc3 + '</td><td>'+ getOptionsField4() +'</td></tr>';
+			this_text += '<tr><td>Biber Field 5: </td><td>' + biber_tags[4] +  '</td><td> | '+ desc4 + '</td><td>'+ getOptionsField5() +'</td></tr>';
+			this_text += '<tr><td>Biber Field 6: </td><td>' + biber_tags[5] +  '</td><td> | '+ desc5 + '</td><td>'+ getOptionsField6() +'</td></tr>';
+			this_text += '<tr><td>Biber Field 7: </td><td>' + biber_tags[6] +  '</td><td> | '+ desc6 + '</td><td>'+ getOptionsField7() +'</form></td></tr>';
 			this_text += '</table>';
 			this_text += '<hr>Comments:<br><textarea rows="4" cols="30" name="comments" onchange="includeComments(this);">' + e.getAttribute("data-comments")  + '</textarea>';
 			document.getElementById('info_box').innerHTML = this_text;
 			getNewTags(e);
-			
 		}
 		
 		function readText(filePath) {
