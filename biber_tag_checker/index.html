@@ -7,7 +7,7 @@
     	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
 		<script src="js/FileSaver.js"></script>
 		<script type="text/javascript">
-		
+
 		var current_token = 0;
 		var total_token_count = 0;
 		var tag0_dict = {
@@ -36,7 +36,7 @@
   				"ERROR": "error",
   				"H": "markup"
 		};
-		
+
 		var tag1_dict = {
   				"CM": "common",
   				"PR": "proper",
@@ -77,7 +77,7 @@
   				"PCT": "percent sign",
   				"EMDSH": "emdash",
   				"ENDSH": "endash"};
-  				
+
 		var tag2_dict = {
   				"SING": "Number - singular",
   				"PLUR": "Number - plural",
@@ -96,7 +96,7 @@
   				"RIGHT": "Position of Punctuation - right",
   				"PHRV": "Multiword Verb Type - phrasal verb particle",
   				"PPVB": "Multiword Verb Type - prepositional verb"};
-  				
+
   		var tag3_dict = {
   				"1": "first person",
   				"2": "second person",
@@ -116,7 +116,7 @@
   				"BY": "Type of Passive	- agentive",
   				"NOM": "Derivation - nominalization",
   				"COP": "Valency - copular"};
-  				
+
   		var tag4_dict = {
   				"GE": "genitive",
   				"PRO": "pronominal function",
@@ -134,7 +134,7 @@
   				"CONT": "contracted",
   				"HYPH": "hyphenated",
   				"SPLT": "inserted between main verb and aux verb"};
-  				
+
   		var tag5_dict = {
   				"PIED": "Position - pied piping",
   				"PMOD": "Position - noun premodifier",
@@ -162,49 +162,49 @@
   				"BINF": "bare infinitive complement clause",
   				"A": "after something",
   				"B": "before something"};
-  				
-  		var tag6_dict = {	
+
+  		var tag6_dict = {
   				"EXT": "extraposed",
   				"MULTI": "multiword"};
-		
+
 		function includeComments(e) {
 			document.getElementById(current_token).setAttribute("data-comments", e.value);
 		}
-		
+
 		function setNewTag() {
 			var e1 = document.getElementById('field1');
 			var field1_value = e1.options[e1.selectedIndex].value;
 			var new_tag = field1_value + '+';
-			
-			
+
+
 			var e2 = document.getElementById('field2');
 			var field2_value = e2.options[e2.selectedIndex].value;
 			new_tag += field2_value +  '+';
-			
+
 			var e3 = document.getElementById('field3');
 			var field3_value = e3.options[e3.selectedIndex].value;
 			new_tag += field3_value +  '+';
-			
+
 			var e4 = document.getElementById('field4');
 			var field4_value = e4.options[e4.selectedIndex].value;
 			new_tag += field4_value +  '+';
-			
+
 			var e5 = document.getElementById('field5');
 			var field5_value = e5.options[e5.selectedIndex].value;
 			new_tag += field5_value +  '+';
-			
+
 			var e6 = document.getElementById('field6');
 			var field6_value = e6.options[e6.selectedIndex].value;
 			new_tag += field6_value +  '+';
-			
+
 			var e7 = document.getElementById('field7');
 			var field7_value = e7.options[e7.selectedIndex].value;
 			new_tag += field7_value;
 
-			
+
 			document.getElementById(current_token).setAttribute('new_biber', new_tag);
 		}
-		
+
 		function getNewTags(e){
 			new_biber_tags = e.getAttribute('new_biber').split('+');
 			document.getElementById('field1').value = new_biber_tags[0];
@@ -215,7 +215,7 @@
 			document.getElementById('field6').value = new_biber_tags[5];
 			document.getElementById('field7').value = new_biber_tags[6];
 		}
-		
+
 		function previous() {
 			document.getElementById(current_token).className = 'not_highlight';
 			current_token = Number(current_token) - 1;
@@ -224,7 +224,7 @@
 			}
 			openTag(document.getElementById(current_token));
 		}
-		
+
 		function next() {
 			document.getElementById(current_token).className = 'not_highlight';
 			current_token = Number(current_token) + 1;
@@ -234,7 +234,7 @@
 			}
 			openTag(document.getElementById(current_token));
 		}
-		
+
 		function getOptionsField1() {
 			var options = '';
 			options += '<select name="field1" id="field1" onchange="setNewTag();">';
@@ -245,7 +245,7 @@
 			options += '<option value="G">(G) genitive marker</option>';
 			options += '<option value="D">(D) determiner</option>';
 			//this was not in the spreadsheet but it is in the data
-			options += '<option value="DET">(DET) determiner</option>'; 
+			options += '<option value="DET">(DET) determiner</option>';
 			options += '<option value="C">(C) conjunction</option>';
 			options += '<option value="M">(M) number</option>';
 			options += '<option value="N">(N) noun</option>';
@@ -266,7 +266,7 @@
   			options += '</select>';
 			return options;
 		};
-		
+
 		function getOptionsField2() {
 			var options = '';
 			options += '<select name="field2" id="field2" onchange="setNewTag();">';
@@ -313,7 +313,7 @@
   			options += '</select>';
 			return options;
 		};
-		
+
 		function getOptionsField3() {
 			var options = '';
 			options += '<select name="field3" id="field3" onchange="setNewTag();">';
@@ -338,7 +338,7 @@
   			options += '</select>';
 			return options;
 		};
-		
+
 		function getOptionsField4() {
 			var options = '';
 			options += '<select name="field4" id="field4" onchange="setNewTag();">';
@@ -364,7 +364,7 @@
   			options += '</select>';
 			return options;
 		};
-		
+
 		function getOptionsField5() {
 			var options = '';
 			options += '<select name="field5" id="field5" onchange="setNewTag();">';
@@ -388,7 +388,7 @@
   			options += '</select>';
 			return options;
 		};
-		
+
 		function getOptionsField6() {
 			var options = '';
 			options += '<select name="field6" id="field6" onchange="setNewTag();">';
@@ -422,7 +422,7 @@
   			options += '</select>';
 			return options;
 		};
-		
+
 		function getOptionsField7() {
 			var options = '';
 			options += '<select name="field7" id="field7" onchange="setNewTag();">';
@@ -432,14 +432,14 @@
   			options += '</select>';
 			return options;
 		};
-		
+
 		function openTag(e) {
 			document.getElementById(current_token).className = 'not_highlight';
 			current_token = e.id;
 			e.className = 'main_highlight';
 			token = e.innerHTML;
 			var biber_tags = e.getAttribute("biber").split("+");
-			
+
 			var desc0 = '';
 			var desc1 = '';
 			var desc2 = '';
@@ -447,7 +447,7 @@
 			var desc4 = '';
 			var desc5 = '';
 			var desc6 = '';
-			
+
 			if (biber_tags[0] != ''){desc0 = tag0_dict[biber_tags[0]];}
 			if (biber_tags[1] != ''){desc1 = tag1_dict[biber_tags[1]];}
 			if (biber_tags[2] != ''){desc2 = tag2_dict[biber_tags[2]];}
@@ -455,12 +455,12 @@
 			if (biber_tags[4] != ''){desc4 = tag4_dict[biber_tags[4]];}
 			if (biber_tags[5] != ''){desc5 = tag5_dict[biber_tags[5]];}
 			if (biber_tags[6] != ''){desc6 = tag6_dict[biber_tags[6]];}
-			
+
 			this_text = '<a href="#" class="button" onclick="previous();return false;"> &lt;&lt; previous token </a>';
 			this_text += ' Tags for the token <b>' + token + '</b> ';
 			this_text += '<a href="#" class="button" onclick="next();return false;"> next token &gt;&gt; </a><br>';
 			this_text += 'CLAWS7: ' + e.getAttribute("claws") + '<br>';
-			
+
 			this_text += '<table>';
 			this_text += '<tr><td><form>Biber Field 1: </td><td>' + biber_tags[0] + '</td><td> | '+ desc0 + '</td><td>'+ getOptionsField1() +'</td></tr>';
 			this_text += '<tr><td>Biber Field 2: </td><td>' + biber_tags[1] +  '</td><td> | '+ desc1 + '</td><td>'+ getOptionsField2() +'</td></tr>';
@@ -474,76 +474,89 @@
 			document.getElementById('info_box').innerHTML = this_text;
 			getNewTags(e);
 		}
-		
+
 		function readText(filePath) {
-		
+
 				reader = new FileReader();
 				file_name = filePath.files[0].name;
 				var output = ""; //placeholder for text output
 				token_nbr = 0;
-				if(filePath.files && filePath.files[0]) {           
+				if(filePath.files && filePath.files[0]) {
             		reader.onload = function (e) {
                 		output = e.target.result;
                 		var text = '<p>';
                 		var lines = output.split(/\n+/);
+                    var start_text = false;
                 		for (i = 0; i < lines.length; i++) {
-                		var elements = lines[i].split(/\s/);
-                		if (elements.length > 2) {
-                			  var claws_tag = elements[2];
-                			  var biber_tag = elements[1];
-                			  var this_token = elements[0].replace(/</g, "&lt;")
-                			  this_token = this_token.replace(/>/g, "&gt;")
-                			  if (elements[0] == '<p>') {
-                				  text = text + '</p>';
-                				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;p&gt;</a></p>';
-                				  token_nbr += 1;
-                				  text = text + '<p>';
-                			  } else if (elements[0] == '<h>') {
-                				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;h&gt;</a></p>';
-                			  	  token_nbr += 1;
-                			  } else {
-                				  text = text + '<a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + this_token + "</a> ";
-                				  token_nbr += 1;
-                			  }
-                			} else {
-                				elements = lines[i].split(/_/);
-                				text = text + '<a href="#" id="' + token_nbr + '" claws="" biber="++++++" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + this_token + "</a> ";  
-                				token_nbr += 1;
-                				}
-                			
+                      var this_line = lines[i];
+                      if (!start_text) {
+                        var this_line2 = this_line.replace(/</g, "&lt;");
+                        this_line2 = this_line2.replace(/>/g, "&gt;");
+                        text += '<a href="#" id="' + token_nbr + '" claws="" biber="++++++" new_biber="++++++" class="not_highlight" style="background: #d9d9d9;" data-comments="">' + this_line2 + '</a><br>';
+                        token_nbr += 1;
+                        if (this_line.indexOf('<End Header>') != -1) {
+                          start_text = true;
+                        }
+                      } else {
+                        var elements = lines[i].split(/\s/);
+                    		if (elements.length > 2) {
+                    			  var claws_tag = elements[2];
+                    			  var biber_tag = elements[1];
+                    			  var this_token = elements[0].replace(/</g, "&lt;")
+                    			  this_token = this_token.replace(/>/g, "&gt;")
+                    			  if (elements[0] == '<p>') {
+                    				  text = text + '</p>';
+                    				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;p&gt;</a></p>';
+                    				  token_nbr += 1;
+                    				  text = text + '<p>';
+                    			  } else if (elements[0] == '<h>') {
+                    				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;h&gt;</a></p>';
+                    			  	  token_nbr += 1;
+                    			  } else {
+                    				  text = text + '<a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + this_token + "</a> ";
+                    				  token_nbr += 1;
+                    			  }
+                    			} else {
+                    				elements = lines[i].split(/_/);
+                    				text = text + '<a href="#" id="' + token_nbr + '" claws="" biber="++++++" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + this_token + "</a> ";
+                    				token_nbr += 1;
+                    				}
+                      }
+
+
                 		}
                 		document.getElementById('text_window').innerHTML = text;
                 		total_token_count = token_nbr;
                 		document.getElementById('filename').value = file_name.replace(/\.txt|\.tec/g,'') + "_tagchecked.txt";
-                		document.getElementById('info_box').innerHTML = "Click on a token/word on the text to start tag checking.";
-				
+                		document.getElementById('info_box').innerHTML = "Click on a token/word on the text to start tag checking. Shaded area has no tags.";
+
 					};
 				reader.readAsText(filePath.files[0]);
                 };
         }
-        
+
         function exportData() {
 		        var content = "Token\tOriginal_Biber_Tags\tOriginal_Claws_Tag\tNew_Biber_Tags\tComments\r\n";
-				
-						
+
+
 				for (var i = 0, length = total_token_count; i < length; i++) {
-				
+
 					var token = document.getElementById(i);
-				
+
 					if (token != null) {
 						clean_token = token.innerHTML.replace(/&lt;/g,'<');
 						clean_token = clean_token.replace(/&gt;/g,'>');
 						content +=  clean_token + "\t" + token.getAttribute('biber') + "\t" + token.getAttribute('claws')  + "\t" + token.getAttribute('new_biber') + "\t" + token.getAttribute("data-comments").replace(/\n/g,' ') + "\r\n";
-						} 
+						}
 					}
-			
+
 				var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
 				var newfilename = document.getElementById('filename').value;
 				if (newfilename == '') {
 					newfilename = 'output.txt';
 				}
 				saveAs(blob, newfilename);
-	
+
 		    }
 		</script>
 
@@ -565,23 +578,23 @@
 					</tr>
 				</table>
 			</td>
-			
+
 			<td><h2>Biber Tag Checking Tool </h2></td>
 			<td><div id="cit_info"></div></td>
 			<td><a href="#" class="button" onclick="location.reload();">Clear Tool</a></td>
-			
+
 			</tr>
 		</table>
-			
+
 	</div>
-	
+
 	<div id="text_window" class="text_window"></div>
 	<div id="info_box" class="info_box">Load a text to start tag checking</div>
-	
+
 	<div id="bottom_bar" class="bottom_bar">
-	
+
 		<form><a href="#" class="button" onclick="exportData();return false;">Download File</a> File name: <input type="text" id="filename" size="50"></form>
-		
+
 	</div>
   </body>
-</html>	
+</html>
