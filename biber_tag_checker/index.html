@@ -174,37 +174,67 @@
 		}
 
 		function setNewTag() {
+      var how_many_blank = 0;
+      var this_token = document.getElementById(current_token);
+
+
 			var e1 = document.getElementById('field1');
 			var field1_value = e1.options[e1.selectedIndex].value;
 			var new_tag = field1_value + '+';
-
+      if (field1_value == '') {
+        how_many_blank += 1;
+      }
 
 			var e2 = document.getElementById('field2');
 			var field2_value = e2.options[e2.selectedIndex].value;
 			new_tag += field2_value +  '+';
+      if (field2_value == '') {
+        how_many_blank += 1;
+      }
 
 			var e3 = document.getElementById('field3');
 			var field3_value = e3.options[e3.selectedIndex].value;
 			new_tag += field3_value +  '+';
+      if (field3_value == '') {
+        how_many_blank += 1;
+      }
 
 			var e4 = document.getElementById('field4');
 			var field4_value = e4.options[e4.selectedIndex].value;
 			new_tag += field4_value +  '+';
+      if (field4_value == '') {
+        how_many_blank += 1;
+      }
 
 			var e5 = document.getElementById('field5');
 			var field5_value = e5.options[e5.selectedIndex].value;
 			new_tag += field5_value +  '+';
+      if (field5_value == '') {
+        how_many_blank += 1;
+      }
 
 			var e6 = document.getElementById('field6');
 			var field6_value = e6.options[e6.selectedIndex].value;
 			new_tag += field6_value +  '+';
+      if (field6_value == '') {
+        how_many_blank += 1;
+      }
 
 			var e7 = document.getElementById('field7');
 			var field7_value = e7.options[e7.selectedIndex].value;
 			new_tag += field7_value;
+      if (field7_value == '') {
+        how_many_blank += 1;
+      }
+
+      if (how_many_blank == 6) {
+        var biber_tags = this_token.getAttribute("biber").split("+");
+      }
+
+      //document.getElementById('info_box').innerHTML += "<hr>" + how_many_blank;
 
 
-			document.getElementById(current_token).setAttribute('new_biber', new_tag);
+			this_token.setAttribute('new_biber', new_tag);
       document.getElementById('new_label').value = new_tag;
 		}
 
@@ -242,30 +272,30 @@
 			var options = '';
 			options += '<select name="field1" id="field1" onchange="setNewTag();">';
 			options += '<option value="" selected></option>';
-			options += '<option value="Y">(Y) punctuation</option>';
-			options += '<option value="FO">(FO) formula symbol</option>';
-			options += '<option value="FW">(FW) foreign word</option>';
-			options += '<option value="G">(G) genitive marker</option>';
+      options += '<option value="C">(C) conjunction</option>';
 			options += '<option value="D">(D) determiner</option>';
 			//this was not in the spreadsheet but it is in the data
 			options += '<option value="DET">(DET) determiner</option>';
-			options += '<option value="C">(C) conjunction</option>';
+      options += '<option value="ERROR">(ERROR) error</option>';
+      options += '<option value="EX">(EX) existential there</option>';
+      options += '<option value="FO">(FO) formula symbol</option>';
+			options += '<option value="FW">(FW) foreign word</option>';
+			options += '<option value="G">(G) genitive marker</option>';
+      options += '<option value="H">(H) markup</option>';
+			options += '<option value="I">(I) preposition</option>';
+      options += '<option value="J">(J) adjective</option>';
 			options += '<option value="M">(M) number</option>';
 			options += '<option value="N">(N) noun</option>';
 			options += '<option value="P">(P) pronoun</option>';
-			options += '<option value="I">(I) preposition</option>';
-			options += '<option value="J">(J) adjective</option>';
-			options += '<option value="VM">(VM) modal verb</option>';
 			options += '<option value="R">(R) adverb</option>';
 			options += '<option value="TO">(TO) infinitive marker</option>';
 			options += '<option value="UH">(UH) interjection/filler</option>';
 			options += '<option value="VA">(VA) auxiliary verb</option>';
 			options += '<option value="VL">(VL) lexical verb</option>';
+      options += '<option value="VM">(VM) modal verb</option>';
 			options += '<option value="XX">(XX) not</option>';
-			options += '<option value="EX">(EX) existential there</option>';
+      options += '<option value="Y">(Y) punctuation</option>';
 			options += '<option value="ZZ">(ZZ) letter of the alphabet</option>';
-			options += '<option value="ERROR">(ERROR) error</option>';
-			options += '<option value="H">(H) markup</option>';
   		options += '</select>';
 			return options;
 		};
@@ -274,45 +304,45 @@
 			var options = '';
 			options += '<select name="field2" id="field2" onchange="setNewTag();">';
 			options += '<option value="" selected></option>';
+      options += '<option value="AI">(AI) ain' + "'t</option>";
+      options += '<option value="AM">(AM) am</option>';
+      options += '<option value="APO">(APO) apostrophe</option>';
+      options += '<option value="AT">(AT) article</option>';
+      options += '<option value="BF">(BF) base form</option>';
+      options += '<option value="BRAC">(BRAC) bracket</option>';
+      options += '<option value="CARD">(CARD) cardinal</option>';
+      options += '<option value="CJ">(CJ) conjunction</option>';
 			options += '<option value="CM">(CM) common</option>';
-			options += '<option value="PR">(PR) proper</option>';
+      options += '<option value="COL">(COL) colon</option>';
+      options += '<option value="COM">(COM) comma</option>';
+      options += '<option value="CRD">(CRD) coordinator</option>';
+      options += '<option value="DEM">(DEM) demonstrative</option>';
+			options += '<option value="DOL">(DOL) dollar sign</option>';
+      options += '<option value="DSH">(DSH) dash / hyphen</option>';
 			options += '<option value="ED">(ED) past tense</option>';
-			options += '<option value="EN">(EN) past participle</option>';
-			options += '<option value="ING">(ING) present participle</option>';
-			options += '<option value="BF">(BF) base form</option>';
-			options += '<option value="Z">(Z) third person</option>';
-			options += '<option value="INF">(INF) infinitive</option>';
-			options += '<option value="AM">(AM) am</option>';
-			options += '<option value="AI">(AI) ain' + "'t</option>";
-			options += '<option value="PER">(PER) personal</option>';
+			options += '<option value="ELIP">(ELIP) ellipsis</option>';
+      options += '<option value="EMDSH"> (EMDSH) emdash</option>';
+			options += '<option value="ENDSH"> (EMDSH) endash</option>';
+      options += '<option value="EN">(EN) past participle</option>';
+      options += '<option value="EXCL">(EXCL) exclamation mark</option>';
+      options += '<option value="F">(F) fraction</option>';
+			options += '<option value="HASH">(HASH) pound sign / hash tag</option>';
 			options += '<option value="IMPR">(IMPR) impersonal</option>';
+			options += '<option value="INF">(INF) infinitive</option>';
+      options += '<option value="ING">(ING) present participle</option>';
 			options += '<option value="SRD">(SRD) subordinator</option>';
-			options += '<option value="CRD">(CRD) coordinator</option>';
-			options += '<option value="AT">(AT) article</option>';
-			options += '<option value="DEM">(DEM) demonstrative</option>';
-			options += '<option value="F">(F) fraction</option>';
 			options += '<option value="T">(T) time</option>';
 			options += '<option value="ORD">(ORD) ordinal</option>';
-			options += '<option value="CARD">(CARD) cardinal</option>';
-			options += '<option value="CJ">(CJ) conjunction</option>';
-			options += '<option value="PART">(PART) particle</option>';
-			options += '<option value="COM">(COM) comma</option>';
-			options += '<option value="SCOL">(SCOL) semicolon</option>';
-			options += '<option value="COL">(COL) colon</option>';
-			options += '<option value="QM">(QM) question mark</option>';
-			options += '<option value="EXCL">(EXCL) exclamation mark</option>';
-			options += '<option value="PRD">(PRD) period</option>';
 			options += '<option value="PAR">(PAR) parenthesis</option>';
-			options += '<option value="APO">(APO) apostrophe</option>';
-			options += '<option value="QUO">(QUO) quotation mark</option>';
-			options += '<option value="DSH">(DSH) dash / hyphen</option>';
-			options += '<option value="ELIP">(ELIP) ellipsis</option>';
-			options += '<option value="BRAC">(BRAC) bracket</option>';
-			options += '<option value="DOL">(DOL) dollar sign</option>';
-			options += '<option value="HASH">(HASH) pound sign / hash tag</option>';
-			options += '<option value="PCT">(PCT) percent sign</option>';
-			options += '<option value="EMDSH"> (EMDSH) emdash</option>';
-			options += '<option value="ENDSH"> (EMDSH) endash</option>';
+			options += '<option value="PART">(PART) particle</option>';
+      options += '<option value="PCT">(PCT) percent sign</option>';
+      options += '<option value="PER">(PER) personal</option>';
+      options += '<option value="PR">(PR) proper</option>';
+      options += '<option value="PRD">(PRD) period</option>';
+      options += '<option value="QM">(QM) question mark</option>';
+      options += '<option value="QUO">(QUO) quotation mark</option>';
+			options += '<option value="SCOL">(SCOL) semicolon</option>';
+      options += '<option value="Z">(Z) third person</option>';
   			options += '</select>';
 			return options;
 		};
@@ -431,14 +461,34 @@
 			options += '<select name="field7" id="field7" onchange="setNewTag();">';
 			options += '<option value="" selected></option>';
 			options += '<option value="EXT">(EXT) extraposed</option>';
-			options += '<option value="MULTI">(MULTI) multiword</option>';
+			options += '<option value="MULTI1">(MULTI) multiword - word 1</option>';
+      options += '<option value="MULTI2">(MULTI) multiword - word 2</option>';
+      options += '<option value="MULTI3">(MULTI) multiword - word 3</option>';
+      options += '<option value="MULTI4">(MULTI) multiword - word 4</option>';
   		options += '</select>';
 			return options;
 		};
 
 		function openTag(e) {
-			document.getElementById(current_token).className = 'not_highlight';
-			current_token = e.id;
+      var previous_token = document.getElementById(current_token);
+      if (previous_token.getAttribute("new_biber") == '++++++') {
+        previous_token.className = 'not_highlight';
+      } else {
+        previous_token.className = 'highlight';
+      }
+
+      if (previous_token.getAttribute("data-comments") != '') {
+        previous_token.className = 'highlight';
+      }
+
+
+      current_token = e.id;
+
+      token_info_div = document.getElementById("cit_info");
+      token_info_div.innerHTML = 'token #' + current_token;
+      token_info_div.innerHTML += ' out of ' + total_token_count + ' (';
+      token_info_div.innerHTML += ((current_token /total_token_count) * 100).toFixed(2) + '%)';
+
 			e.className = 'main_highlight';
 			token = e.innerHTML;
 			var biber_tags = e.getAttribute("biber").split("+");
@@ -495,47 +545,80 @@
 				if(filePath.files && filePath.files[0]) {
             		reader.onload = function (e) {
                 		output = e.target.result;
-                		var text = '<p>';
-                		var lines = output.split(/\n+/);
-                    var start_text = false;
-                		for (i = 0; i < lines.length; i++) {
-                      var this_line = lines[i];
-                      if (!start_text) {
-                        var this_line2 = this_line.replace(/</g, "&lt;");
-                        this_line2 = this_line2.replace(/>/g, "&gt;");
-                        text += '<a href="#" id="' + token_nbr + '" claws="" biber="++++++" new_biber="++++++" class="not_highlight" style="background: #d9d9d9;" data-comments="">' + this_line2 + '</a><br>';
-                        token_nbr += 1;
-                        if (this_line.indexOf('<End Header>') != -1) {
-                          start_text = true;
+                		var text = '';
+                		var lines = output.split(/\r\n+/);
+                    if (lines[0] != "Token\tOriginal_Biber_Tags\tOriginal_Claws_Tag\tNew_Biber_Tags\tComments") {
+                        var start_text = false;
+                    		for (i = 0; i < lines.length; i++) {
+                          var this_line = lines[i];
+                          if (!start_text) {
+                            var this_line2 = this_line.replace(/</g, "&lt;");
+                            this_line2 = this_line2.replace(/>/g, "&gt;");
+                            text += '<a href="#" id="' + token_nbr + '" claws="" biber="++++++" new_biber="++++++" class="not_highlight" style="background: #d9d9d9;" data-comments="">' + this_line2 + '</a><br>';
+                            token_nbr += 1;
+                            if (this_line.indexOf('<End Header>') != -1) {
+                              start_text = true;
+                            }
+                          } else {
+                            var elements = lines[i].split(/\s/);
+                        		if (elements.length > 2) {
+                        			  var claws_tag = elements[2];
+                        			  var biber_tag = elements[1];
+                        			  var this_token = elements[0].replace(/</g, "&lt;")
+                        			  this_token = this_token.replace(/>/g, "&gt;")
+                        			  if (elements[0] == '<p>') {
+                        				  text = text + '</p>';
+                        				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;p&gt;</a></p>';
+                        				  token_nbr += 1;
+                        				  text = text + '<p>';
+                        			  } else if (elements[0] == '<h>') {
+                        				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;h&gt;</a></p>';
+                        			  	  token_nbr += 1;
+                        			  } else {
+                        				  text = text + '<a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + this_token + "</a> ";
+                        				  token_nbr += 1;
+                        			  }
+                        			} else {
+                        				elements = lines[i].split(/_/);
+                        				text = text + '<a href="#" id="' + token_nbr + '" claws="" biber="++++++" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + this_token + "</a> ";
+                        				token_nbr += 1;
+                        				}
+                          }
+
+
+                    		}
+                  } else {
+                      var this_line = lines[1];
+                      this_line = this_line.replace(/</g, "&lt;");
+                      this_line = this_line.replace(/>/g, "&gt;");
+                      var elements = this_line.split(/\t/);
+                      text += '<a href="#" id="' + token_nbr + '" claws="" biber="++++++" new_biber="++++++" class="not_highlight" style="background: #d9d9d9;" data-comments="">' + elements[0] + '</a><br>';
+                      token_nbr += 1;
+                    	for (i = 2; i < lines.length; i++) {
+                        var this_line = lines[i];
+                        this_line = this_line.replace(/</g, "&lt;");
+                        this_line = this_line.replace(/>/g, "&gt;");
+                        var elements = this_line.split(/\t/);
+                        var claws_tag = elements[2];
+                        var biber_tag = elements[1];
+                        var this_token = elements[0];
+                        var new_biber_tag = elements[3];
+                        var this_comment = elements[4];
+                        if (new_biber_tag == "++++++") {
+                          var this_class = "not_highlight";
+                        } else {
+                          var this_class = "highlight";
                         }
-                      } else {
-                        var elements = lines[i].split(/\s/);
-                    		if (elements.length > 2) {
-                    			  var claws_tag = elements[2];
-                    			  var biber_tag = elements[1];
-                    			  var this_token = elements[0].replace(/</g, "&lt;")
-                    			  this_token = this_token.replace(/>/g, "&gt;")
-                    			  if (elements[0] == '<p>') {
-                    				  text = text + '</p>';
-                    				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;p&gt;</a></p>';
-                    				  token_nbr += 1;
-                    				  text = text + '<p>';
-                    			  } else if (elements[0] == '<h>') {
-                    				  text = text + '<p><a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">&lt;h&gt;</a></p>';
-                    			  	  token_nbr += 1;
-                    			  } else {
-                    				  text = text + '<a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + this_token + "</a> ";
-                    				  token_nbr += 1;
-                    			  }
-                    			} else {
-                    				elements = lines[i].split(/_/);
-                    				text = text + '<a href="#" id="' + token_nbr + '" claws="" biber="++++++" new_biber="++++++" class="not_highlight" data-comments="" onclick="openTag(this);return false;">' + this_token + "</a> ";
-                    				token_nbr += 1;
-                    				}
+
+                        if (this_comment != '') {
+                          var this_class = "highlight";
+                        }
+
+                        text += '<a href="#" id="' + token_nbr + '" claws="'+ claws_tag + '" biber="' + biber_tag + '" new_biber="' + new_biber_tag + '" class="' + this_class + '" data-comments="' + this_comment + '" onclick="openTag(this);return false;">' + this_token + '</a> ';
+                        token_nbr += 1;
+
                       }
-
-
-                		}
+                  }
                 		document.getElementById('text_window').innerHTML = text;
                 		total_token_count = token_nbr;
                 		document.getElementById('filename').value = file_name.replace(/\.txt|\.tec/g,'') + "_tagchecked.txt";
