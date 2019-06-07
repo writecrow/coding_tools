@@ -25,7 +25,6 @@
   				"J": "adjective",
   				"VM": "modal verb",
   				"R": "adverb",
-  				"C_": "conjunction",
   				"TO": "infinitive marker",
   				"UH": "interjection/filler",
   				"VA": "auxiliary verb",
@@ -163,11 +162,15 @@
   				"THDEL": "that-deletion",
   				"BINF": "bare infinitive complement clause",
   				"A": "after something",
-  				"B": "before something"};
+  				"B": "before something",
+          "DEG": "Degree Averb"};
 
   		var tag6_dict = {
   				"EXT": "extraposed",
-  				"MULTI": "multiword"};
+  				"MULTI1": "multiword",
+  				"MULTI2": "multiword",
+  				"MULTI3": "multiword",
+          "MULTI4": "multiword"};
 
 		function includeComments(e) {
 			document.getElementById(current_token).setAttribute("data-comments", e.value);
@@ -250,7 +253,16 @@
 		}
 
 		function previous() {
-			document.getElementById(current_token).className = 'not_highlight';
+      var previous_token = document.getElementById(current_token);
+      if (previous_token.getAttribute("new_biber") == '++++++') {
+        previous_token.className = 'not_highlight';
+      } else {
+        previous_token.className = 'highlight';
+      }
+
+      if (previous_token.getAttribute("data-comments") != '') {
+        previous_token.className = 'highlight';
+      }
 			current_token = Number(current_token) - 1;
 			if (current_token < 0) {
 				current_token = 0;
@@ -259,7 +271,17 @@
 		}
 
 		function next() {
-			document.getElementById(current_token).className = 'not_highlight';
+      var previous_token = document.getElementById(current_token);
+      if (previous_token.getAttribute("new_biber") == '++++++') {
+        previous_token.className = 'not_highlight';
+      } else {
+        previous_token.className = 'highlight';
+      }
+
+      if (previous_token.getAttribute("data-comments") != '') {
+        previous_token.className = 'highlight';
+      }
+
 			current_token = Number(current_token) + 1;
 			document.getElementById('info_box').innerHTML += current_token + ' ' + total_token_count;
 			if (current_token >= total_token_count) {
@@ -436,6 +458,7 @@
 			options += '<option value="CND">(CND) Semantic Domain - conditional</option>';
       options += '<option value="CONC">(CONC) Semantic Domain - concession</option>';
       options += '<option value="DAY">(DAY) Semantic Domain - day</option>';
+      options += '<option value="DEG">(DEG) Degree Adverb</option>';
       options += '<option value="DIR">(DIR) Semantic Domain - direction</option>';
 			options += '<option value="DO">(DO) form of do</option>';
 			options += '<option value="EVER">(EVER) WH-Word Ending: -ever ending</option>';
@@ -446,7 +469,7 @@
 			options += '<option value="ONLY">(ONLY) only occuring in attributive form</option>';
       options += '<option value="PIED">(PIED) Position - pied piping</option>';
 			options += '<option value="PMOD">(PMOD) Position - noun premodifier</option>';
-      options += '<option value="POS">(POS) "Semantic Domain - possibility</option>';
+      options += '<option value="POS">(POS) Semantic Domain - possibility</option>';
       options += '<option value="PRDN">(PRDN) Semantic Domain - prediction</option>';
 			options += '<option value="STNC">(STNC) Semantic Domain - stance</option>';
 			options += '<option value="TIME">(TIME) Semantic Domain - temporal</option>';
@@ -501,7 +524,7 @@
 			var desc5 = '';
 			var desc6 = '';
 
-			if (biber_tags[0] != ''){desc0 = tag0_dict[biber_tags[0]];}
+			if (biber_tags[0] != ''){desc0 = tag0_dict[biber_tags[0].replace("_", "")];}
 			if (biber_tags[1] != ''){desc1 = tag1_dict[biber_tags[1]];}
 			if (biber_tags[2] != ''){desc2 = tag2_dict[biber_tags[2]];}
 			if (biber_tags[3] != ''){desc3 = tag3_dict[biber_tags[3]];}
