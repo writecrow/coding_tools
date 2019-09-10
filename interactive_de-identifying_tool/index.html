@@ -57,8 +57,13 @@
       this_text += '<h3>Replace with:</h3>';
       this_text += '<a href="#" class="button" onclick="replaceToken(this);return false;">&lt;name&gt;</a> ';
       this_text += '<a href="#" class="button" onclick="replaceToken(this);return false;">&lt;place&gt;</a> ';
+      this_text += '<a href="#" class="button" onclick="replaceToken(this);return false;">&lt;course&gt;</a> ';
+      this_text += '<a href="#" class="button" onclick="replaceToken(this);return false;">&lt;position&gt;</a> ';
       this_text += '<a href="#" class="button" onclick="revertToken();return false;">Revert to Original</a> ';
       this_text += '</form>';
+      this_text += '<hr>'
+      this_text += "<b>Removing names from texts:</b><br>Names of the students, instructor, or interviewees (for interview assignments) should be replaced with &lt;name&gt;.<br> <b>Removing identifying other identifying information from texts:</b><br>PLACE: In addition to names, we should look for places that might identify the student (not China, but a small city in a country not represented well in the corpus—all others besides China at this point should be considered as identifying information). These would probably come up in the literacy narrative, but could also be used to describe interviewees. <br>Give preference to the code &lt;name&gt;. If &lt;name&gt; does not seem appropriate, use &lt;place&gt; to replace the identifying information.<br>COURSE information: Professors (interviewees) might be identified through the course taught. Remove the course name and use the code &lt;course&gt;.<br>POSITION information: Professors (interviewees) may also be identified through a specific job title or position that they hold. Remove this information and use the code &lt;position&gt; in its place."
+
 
       document.getElementById('info_box').innerHTML = this_text;
 
