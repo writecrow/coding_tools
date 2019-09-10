@@ -3,6 +3,7 @@
   <head>
   	<meta charset="utf-8">
     <title>De-identification Tool</title>
+    <link href='https://fonts.googleapis.com/css?family=Space Mono' rel='stylesheet'>
     <link href="style.css" rel="stylesheet">
     	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
 		<script src="js/FileSaver.js"></script>
@@ -29,11 +30,12 @@
       var previous_token = document.getElementById(current_token);
       previous_token.className = 'not_highlight';
 
-      if (previous_token.getAttribute("proper_name") == "yes") {
+      if (previous_token.getAttribute("proper_name") == "yes")  {
         previous_token.className = 'conc_highlight';
       }
 
-      if (previous_token.getAttribute("original_token") != previous_token.innerHTML) {
+      if (previous_token.getAttribute("original_token") != previous_token.innerHTML
+           & current_token != 0) {
         previous_token.className = 'highlight';
       }
 
@@ -75,30 +77,40 @@
             		reader.onload = function (e) {
                 		output = e.target.result;
                 		var text = '';
+                    var start_text = false;
                 		var lines = output.split(/\r\n+/);
                     for (i = 0; i < lines.length; i++) {
                       var this_line1 = lines[i]
-                      var this_line2 = this_line1.replace(/</g, "&lt;");
-                      this_line2 = this_line2.replace(/>/g, "&gt;");
-                      var tokens = this_line2.split(' ')
+                      var tokens = this_line1.split(' ')
                       for (j = 0; j < tokens.length; j++) {
                          var this_token = tokens[j];
-                         if (propername_pattern.test(this_token)) {
-                           text += '<a href="#" id="' + token_nbr + '" proper_name="yes" class="conc_highlight" original_token="' + this_token + '" onclick="openToken(this);return false;">' + this_token + '</a> ';
+                         var this_token_clean = this_token.replace(/</g, "&lt;");
+                         this_token_clean = this_token_clean.replace(/>/g, "&gt;");
+                         this_token_clean = this_token_clean.replace(/"/g, "''");
+                         if (propername_pattern.test(this_token) & start_text) {
+                           text += '<a href="#" id="' + token_nbr + '" proper_name="yes" class="conc_highlight" original_token="' + this_token_clean + '" onclick="openToken(this);return false;">' + this_token_clean + '</a> ';
                          } else {
-                           text += '<a href="#" id="' + token_nbr + '" proper_name="no" class="not_highlight" original_token="' + this_token + '" onclick="openToken(this);return false;">' + this_token + '</a> ';
-                         }
+                             if (start_text) {
+                               text += '<a href="#" id="' + token_nbr + '" proper_name="no" class="not_highlight" original_token="' + this_token_clean + '" onclick="openToken(this);return false;">' + this_token_clean + '</a> ';
+                             } else {
+                               text += '<a href="#" id="' + token_nbr + '" proper_name="no" class="not_highlight" original_token="' + this_token_clean + '" onclick="return false;">' + this_token_clean + '</a> ';
+                             }
+                           }
                          token_nbr += 1;
                       }
-                    text += '<br>'
-                    text += '<a href="#" id="' + token_nbr + '" original_token="" onclick="return false;">\r\n</a> ';
-                    token_nbr += 1;
+                      text += '<br>'
+                      text += '<a href="#" id="' + token_nbr + '" original_token="" onclick="return false;">\r\n</a> ';
+                      token_nbr += 1;
+                      if (this_line1.indexOf('<End Header>') != -1) {
+                        start_text = true;
+                      }
 
-                  }
+                   }
                 		document.getElementById('text_window').innerHTML = text;
                 		total_token_count = token_nbr;
                 		document.getElementById('filename').value = file_name.replace(/\.txt|\.tec/g,'') + "_deidentified.txt";
                 		document.getElementById('info_box').innerHTML = "Click on a token/word on the text to start de-identification.";
+
 
 					};
 				reader.readAsText(filePath.files[0]);
@@ -115,11 +127,15 @@
 					if (token != null) {
 						clean_token = token.innerHTML.replace(/&lt;/g,'<');
 						clean_token = clean_token.replace(/&gt;/g,'>');
+            clean_token = clean_token.replace(/''/g, '"');
+            clean_token = clean_token.replace(/&amp;/g,'&');
 						content +=  clean_token + " ";
 						}
 					}
 
-				var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+        var clean_content = content.replace(/\s+\n\s/g, '\n');
+
+				var blob = new Blob([clean_content], {type: "text/plain;charset=utf-8"});
 				var newfilename = document.getElementById('filename').value;
 				if (newfilename == '') {
 					newfilename = 'output.txt';
