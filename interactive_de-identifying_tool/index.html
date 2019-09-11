@@ -77,6 +77,8 @@
 				file_name = filePath.files[0].name;
 				var output = ""; //placeholder for text output
 				token_nbr = 0;
+        current_token = 0;
+    		total_token_count = 0;
         var propername_pattern = /[A-Z][a-z]+/;
 				if(filePath.files && filePath.files[0]) {
             		reader.onload = function (e) {
