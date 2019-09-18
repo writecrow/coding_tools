@@ -19,6 +19,12 @@
 
     }
 
+    function deleteToken(e) {
+      var this_token = document.getElementById(current_token);
+      this_token.innerHTML = "DELETED";
+
+    }
+
     function revertToken() {
       var this_token = document.getElementById(current_token);
       replacement = this_token.getAttribute("original_token");
@@ -59,10 +65,13 @@
       this_text += '<a href="#" class="button" onclick="replaceToken(this);return false;">&lt;place&gt;</a> ';
       this_text += '<a href="#" class="button" onclick="replaceToken(this);return false;">&lt;course&gt;</a> ';
       this_text += '<a href="#" class="button" onclick="replaceToken(this);return false;">&lt;position&gt;</a> ';
+      this_text += '<h3>Delete Token:</h3>';
+      this_text += '<a href="#" class="button" onclick="deleteToken();return false;">Delete Token</a> ';
+      this_text += '<h3>Revert to Original:</h3>';
       this_text += '<a href="#" class="button" onclick="revertToken();return false;">Revert to Original</a> ';
       this_text += '</form>';
       this_text += '<hr>'
-      this_text += "<b>Removing names from texts:</b><br>Names of the students, instructor, or interviewees (for interview assignments) should be replaced with &lt;name&gt;.<br> <b>Removing identifying other identifying information from texts:</b><br>PLACE: In addition to names, we should look for places that might identify the student (not China, but a small city in a country not represented well in the corpus—all others besides China at this point should be considered as identifying information). These would probably come up in the literacy narrative, but could also be used to describe interviewees. <br>Give preference to the code &lt;name&gt;. If &lt;name&gt; does not seem appropriate, use &lt;place&gt; to replace the identifying information.<br>COURSE information: Professors (interviewees) might be identified through the course taught. Remove the course name and use the code &lt;course&gt;.<br>POSITION information: Professors (interviewees) may also be identified through a specific job title or position that they hold. Remove this information and use the code &lt;position&gt; in its place."
+      this_text += "<b>Replacing names from texts:</b><br>Names of the students, instructor, or interviewees (for interview assignments) should be replaced with &lt;name&gt;.<br> <b>Removing identifying other identifying information from texts:</b><br>PLACE: In addition to names, we should look for places that might identify the student (not China, but a small city in a country not represented well in the corpus—all others besides China at this point should be considered as identifying information). These would probably come up in the literacy narrative, but could also be used to describe interviewees. <br>Give preference to the code &lt;name&gt;. If &lt;name&gt; does not seem appropriate, use &lt;place&gt; to replace the identifying information.<br>COURSE information: Professors (interviewees) might be identified through the course taught. Remove the course name and use the code &lt;course&gt;.<br>POSITION information: Professors (interviewees) may also be identified through a specific job title or position that they hold. Remove this information and use the code &lt;position&gt; in its place.<br><b>Removing tokens from texts:</b><br>Delete comments from instructors by using the 'delete token' button. When the file is downloaded, that token will not be copied over to the downloaded text file."
 
 
       document.getElementById('info_box').innerHTML = this_text;
@@ -72,7 +81,6 @@
 
 
 		function readText(filePath) {
-
 				reader = new FileReader();
 				file_name = filePath.files[0].name;
 				var output = ""; //placeholder for text output
@@ -131,12 +139,15 @@
 
 					var token = document.getElementById(i);
 
-					if (token != null) {
+					if (token != null && token != 'DELETED') {
 						clean_token = token.innerHTML.replace(/&lt;/g,'<');
 						clean_token = clean_token.replace(/&gt;/g,'>');
             clean_token = clean_token.replace(/''/g, '"');
             clean_token = clean_token.replace(/&amp;/g,'&');
-						content +=  clean_token + " ";
+            if (clean_token != 'DELETED') {
+              content +=  clean_token + " ";
+            }
+
 						}
 					}
 
