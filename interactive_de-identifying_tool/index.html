@@ -93,6 +93,9 @@
                 		output = e.target.result;
                 		var text = '';
                     var start_text = false;
+                    if (output.indexOf('<End Header>') == -1) {
+                      start_text = true;
+                    }
                 		var lines = output.split(/\r?\n+/);
                     for (i = 0; i < lines.length; i++) {
                       var this_line1 = lines[i]
