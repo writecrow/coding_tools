@@ -572,6 +572,9 @@
                 		var lines = output.split(/\r\n+/);
                     if (lines[0] != "Token\tOriginal_Biber_Tags\tOriginal_Claws_Tag\tNew_Biber_Tags\tComments") {
                         var start_text = false;
+                        if (output.indexOf('<End Header>') == -1) {
+                          start_text = true;
+                        }
                     		for (i = 0; i < lines.length; i++) {
                           var this_line = lines[i];
                           if (!start_text) {
