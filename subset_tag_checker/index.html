@@ -7,20 +7,21 @@
     	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
 		<script src="js/FileSaver.js"></script>
 		<script type="text/javascript">
-		
+
 		var current_token = 0;
 		var total_token_count = 0;
 		var filtered_tokens = [];
-		
+
 		function includeComments(e) {
 			document.getElementById(current_token).setAttribute("data-comments", e.value);
 		}
-		
+
 		function setNewTag() {
 			var new_tag = document.getElementById('field1').value + '+' + document.getElementById('field2').value +  '+' + document.getElementById('field3').value + '+' + document.getElementById('field4').value + '+' + document.getElementById('field5').value;
 			document.getElementById(current_token).setAttribute('new_biber', new_tag);
+      get_precision()
 		}
-		
+
 		function getNewTags(e){
 			new_biber_tags = e.getAttribute('new_biber').split('+');
 			document.getElementById('field1').value = new_biber_tags[0];
@@ -29,7 +30,7 @@
 			document.getElementById('field4').value = new_biber_tags[3];
 			document.getElementById('field5').value = new_biber_tags[4];
 		}
-		
+
 		function previous() {
 			document.getElementById(current_token).className = 'conc_highlight';
 			which_token = filtered_tokens.indexOf(Number(current_token));
@@ -40,9 +41,9 @@
 			current_token = filtered_tokens[which_token];
 			document.getElementById('info_box').innerHTML += current_token;
 			openTag(document.getElementById(current_token));
-			
+
 		}
-		
+
 		function next() {
 			document.getElementById(current_token).className = 'conc_highlight';
 			which_token = filtered_tokens.indexOf(Number(current_token));
@@ -53,7 +54,7 @@
 			current_token = filtered_tokens[which_token];
 			openTag(document.getElementById(current_token));
 		}
-		
+
 		function openTag(e) {
 			document.getElementById(current_token).className = 'conc_highlight';
 			current_token = e.id;
@@ -73,11 +74,11 @@
 			this_text += '<hr>Comments:<br><textarea rows="4" cols="30" name="comments" onchange="includeComments(this);">' + e.getAttribute("data-comments")  + '</textarea>';
 			document.getElementById('info_box').innerHTML = this_text;
 			getNewTags(e);
-			
+
 		}
-		
+
 		function findNounSequences() {
-		
+
 			for (var i = 0, length = total_token_count; i < length; i++) {
 				var token = document.getElementById(i);
 				var this_biber = token.getAttribute('biber');
@@ -98,35 +99,68 @@
 								token.setAttribute("target_tag", '1');
 								token.onclick = function() { openTag(this);return false; };
 								filtered_tokens.push(i);
-								filtered_tokens.sort(function(a, b){return a - b}); 
+								filtered_tokens.sort(function(a, b){return a - b});
 							}
 						}
 					}
 				}
-			
+
 			}
-		
+
 		}
-		
+
 		function scrollUp(){
 			e = document.getElementById('text_window');
 			e.scrollTop = e.scrollTop - 50;
 		}
-		
+
 		function scrollDown(){
 			e = document.getElementById('text_window');
 			e.scrollTop = e.scrollTop + 50;
 		}
-		
+
+    function get_precision(){
+      var false_positives = 0;
+      var true_positives = 0;
+
+      for (var i = 0, length = total_token_count; i < length; i++) {
+
+        var token = document.getElementById(i);
+
+        if (token != null) {
+          var old_tag = token.getAttribute('biber');
+          var new_tag =  token.getAttribute('new_biber');
+
+          if (new_tag != ''){
+            if (old_tag == new_tag) {
+              true_positives = true_positives + 1;
+            } else {
+              false_positives = false_positives + 1;
+
+            }
+
+            }
+          }
+
+        }
+
+        var precision = true_positives / (true_positives + false_positives)
+
+        document.getElementById('cit_info').innerHTML = "Overall Precision: " + precision.toFixed(2);
+
+    }
+
 		function readText(filePath) {
-		
+
 				reader = new FileReader();
 				file_name = filePath.files[0].name;
 				var output = ""; //placeholder for text output
 				//filter for target tags, change this regular expression to change filter
-				var filter = /\+rel\+|tht\+.cmp|tht0|jj[rtb]?\+atrb\+/;
+        var regex_string = document.getElementById('regex').value
+        let tag_regex = new RegExp(regex_string);
+				var filter = tag_regex;
 				token_nbr = 0;
-				if(filePath.files && filePath.files[0]) {           
+				if(filePath.files && filePath.files[0]) {
             		reader.onload = function (e) {
                 		output = e.target.result;
                 		var text = '<p>';
@@ -152,15 +186,15 @@
 									}
 								} else {
 									text = text + '<a href="#" id="' + token_nbr + '" biber="' + biber_tag + '" title="' + biber_tag + '" new_biber="" target_tag="0" class="not_highlight" data-comments="" onclick="return false;">' + elements[0] + "</a> ";
-									token_nbr += 1;		
+									token_nbr += 1;
 								}
-							} 
-                			
+							}
+
                 		}
                 		document.getElementById('text_window').innerHTML = text;
                 		total_token_count = token_nbr;
                 		document.getElementById('filename').value = file_name.replace(/\.txt/g,'') + "_tagchecked.txt";
-                		findNounSequences();
+                		//findNounSequences();
                 		//document.getElementById('info_box').innerHTML += filtered_tokens;
                 		if (filtered_tokens.length > 1) {
                 			document.getElementById('button_bar').style.display = 'inline';
@@ -170,17 +204,17 @@
 					};
 				reader.readAsText(filePath.files[0]);
                 };
-                
+
         }
-        
+
         function exportData() {
 		        var content = "Token\tOriginal_Biber_Tag\tNew_Biber_Tag\ttarget_feature\tmodified?\tComments\r\n";
-				
-						
+
+
 				for (var i = 0, length = total_token_count; i < length; i++) {
-				
+
 					var token = document.getElementById(i);
-				
+
 					if (token != null) {
 						clean_token = token.innerHTML.replace(/&lt;/g,'<');
 						clean_token = clean_token.replace(/&gt;/g,'>');
@@ -189,16 +223,16 @@
 						var modified = 1;
 						if (old_tag == new_tag || new_tag == '') {modified = 0;};
 						content +=  clean_token + "\t" + old_tag + "\t" + new_tag + "\t" + token.getAttribute("target_tag") + "\t" + modified + "\t" + token.getAttribute("data-comments").replace(/\n/g,' ') + "\r\n";
-						} 
+						}
 					}
-			
+
 				var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
 				var newfilename = document.getElementById('filename').value;
 				if (newfilename == '') {
 					newfilename = 'output.txt';
 				}
 				saveAs(blob, newfilename);
-	
+
 		    }
 		</script>
 
@@ -220,31 +254,36 @@
 					</tr>
 				</table>
 			</td>
-			
+
 			<td><h2>Biber Tag Checking Tool </h2></td>
-			<td><div id="cit_info"></div></td>
+			<td><div id="cit_info">
+
+      </div></td>
 			<td><a href="#" class="button" onclick="location.reload();">Clear Tool</a></td>
-			
+
 			</tr>
 		</table>
-			
+
 	</div>
-	
+
 	<div id="text_window" class="text_window"></div>
-	<div id="info_box" class="info_box"></div>
-	
+	<div id="info_box" class="info_box">
+    Regular Expression for tags: <input type="text" id="regex" size="50" value="\+rel\+|tht\+.cmp|tht0|jj[rtb]?\+atrb\+">
+
+  </div>
+
 	<div id="bottom_bar" class="bottom_bar">
-	
-		<form><a href="#" class="button" onclick="exportData();return false;">Download File</a> File name: <input type="text" id="filename" size="50"> 
-		
+
+		<form><a href="#" class="button" onclick="exportData();return false;">Download File</a> File name: <input type="text" id="filename" size="50">
+
 		</form>
-		
+
 	</div>
-	
+
 	<div id="button_bar" class="button_bar">
 	<a href="#" class="button" onclick="scrollUp();return false;"> &uarr;</a> <a href="#" class="button" onclick="scrollDown();return false;">&darr;</a>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="button" onclick="previous();return false;"> &lt;&lt; previous token </a> <a href="#" class="button" onclick="next();return false;"> next token &gt;&gt; </a>
-	
+
 	</div>
   </body>
-</html>	
+</html>
