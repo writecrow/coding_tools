@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <title>Biber Tag Checking Tool</title>
+    <link href="style.css" rel="stylesheet">
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
+		<script src="js/FileSaver.js"></script>
+		<script type="text/javascript">
+
+		var current_token = 0;
+		var total_token_count = 0;
+		var filtered_tokens = [];
+
+		function includeComments(e) {
+			document.getElementById(current_token).setAttribute("data-comments", e.value);
+		}
+
+		function setNewTag() {
+			var new_tag = document.getElementById('field1').value + '+' + document.getElementById('field2').value + '+' + document.getElementById('field3').value + '+' + document.getElementById('field4').value + '+' + document.getElementById('field5').value + '+' + document.getElementById('field6').value + '+' + document.getElementById('field7').value;
+			document.getElementById(current_token).setAttribute('new_biber', new_tag);
+      get_precision()
+		}
+
+		function getNewTags(e){
+			new_biber_tags = e.getAttribute('new_biber').split('+');
+			document.getElementById('field1').value = new_biber_tags[0];
+			document.getElementById('field2').value = new_biber_tags[1];
+			document.getElementById('field3').value = new_biber_tags[2];
+			document.getElementById('field4').value = new_biber_tags[3];
+			document.getElementById('field5').value = new_biber_tags[4];
+			document.getElementById('field6').value = new_biber_tags[5];
+			document.getElementById('field7').value = new_biber_tags[6];
+		}
+
+		function previous() {
+			document.getElementById(current_token).className = 'conc_highlight';
+			which_token = filtered_tokens.indexOf(Number(current_token));
+			which_token -= 1;
+			if (which_token < 0) {
+				which_token = 0;
+			}
+			current_token = filtered_tokens[which_token];
+			document.getElementById('info_box').innerHTML += current_token;
+			openTag(document.getElementById(current_token));
+
+		}
+
+		function next() {
+			document.getElementById(current_token).className = 'conc_highlight';
+			which_token = filtered_tokens.indexOf(Number(current_token));
+			which_token += 1;
+			if (which_token >= filtered_tokens.length) {
+				which_token = filtered_tokens.length - 1;
+			}
+			current_token = filtered_tokens[which_token];
+			openTag(document.getElementById(current_token));
+		}
+
+		function openTag(e) {
+			document.getElementById(current_token).className = 'conc_highlight';
+			current_token = e.id;
+			e.className = 'main_highlight';
+			token = e.innerHTML;
+			this_text = '';
+			this_text += ' Tags for the token <b>' + token + '</b> ';
+			this_text += '<br>';
+			var biber_tags = e.getAttribute("biber").split("+");
+			this_text += '<table>';
+			this_text += '<tr><td><form>Biber Field 1: </td><td>' + biber_tags[0] + '</td><td><input type="text" id="field1" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Biber Field 2: </td><td>' + biber_tags[1] + '</td><td><input type="text" id="field2" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Biber Field 3: </td><td>' + biber_tags[2] + '</td><td><input type="text" id="field3" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Biber Field 4: </td><td>' + biber_tags[3] + '</td><td><input type="text" id="field4" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Biber Field 5: </td><td>' + biber_tags[4] + '</td><td><input type="text" id="field5" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Biber Field 6: </td><td>' + biber_tags[5] + '</td><td><input type="text" id="field6" onchange="setNewTag();"></td></tr>'
+			this_text += '<tr><td>Biber Field 7: </td><td>' + biber_tags[6] + '</td><td><input type="text" id="field7" onchange="setNewTag();"></td></tr>'
+			this_text += '</table>';
+			this_text += '<hr>Comments:<br><textarea rows="4" cols="30" name="comments" onchange="includeComments(this);">' + e.getAttribute("data-comments")  + '</textarea>';
+			document.getElementById('info_box').innerHTML = this_text;
+			getNewTags(e);
+
+		}
+
+
+		function scrollUp(){
+			e = document.getElementById('text_window');
+			e.scrollTop = e.scrollTop - 50;
+		}
+
+		function scrollDown(){
+			e = document.getElementById('text_window');
+			e.scrollTop = e.scrollTop + 50;
+		}
+
+    function get_precision(){
+      var false_positives = 0;
+      var true_positives = 0;
+
+      for (var i = 0, length = total_token_count; i < length; i++) {
+
+        var token = document.getElementById(i);
+
+        if (token != null) {
+          var old_tag = token.getAttribute('biber');
+          var new_tag =  token.getAttribute('new_biber');
+
+          if (new_tag != ''){
+            if (old_tag == new_tag) {
+              true_positives = true_positives + 1;
+            } else {
+              false_positives = false_positives + 1;
+
+            }
+
+            }
+          }
+
+        }
+
+        var precision = true_positives / (true_positives + false_positives)
+
+        document.getElementById('cit_info').innerHTML = "Overall Precision: " + precision.toFixed(2);
+
+    }
+
+		function readText(filePath) {
+
+				reader = new FileReader();
+				file_name = filePath.files[0].name;
+				var output = ""; //placeholder for text output
+				//filter for target tags, change this regular expression to change filter
+        var regex_string = document.getElementById('regex').value
+        let tag_regex = new RegExp(regex_string);
+				var filter = tag_regex;
+				token_nbr = 0;
+				if(filePath.files && filePath.files[0]) {
+            		reader.onload = function (e) {
+                		output = e.target.result;
+                		var text = '<p>';
+                		var lines = output.split(/\n+/);
+                		// for every line in the text
+                		for (i = 0; i < lines.length; i++) {
+                			var elements = lines[i].split(/\s/);
+                			if (elements.length > 1) {
+                				var biber_tag = elements[1].substr(0);
+                				if (lines[i].match(filter)) {
+                					filtered_tokens.push(token_nbr);
+									if (elements[0] == '<p>') {
+										text = text + '</p>';
+										text = text + '<p><a href="#" id="' + token_nbr + '" biber="' + biber_tag + '" new_biber="' + biber_tag + '" target_tag="1" class="conc_highlight" data-comments="" onclick="openTag(this);return false;">&lt;p&gt;</a></p>';
+										token_nbr += 1;
+										text = text + '<p>';
+									} else if (elements[0] == '<h>') {
+										text = text + '<p><a href="#" id="' + token_nbr + '" biber="' + biber_tag + '" new_biber="' + biber_tag + '" target_tag="1" class="conc_highlight" data-comments="" onclick="openTag(this);return false;">&lt;h&gt;</a></p>';
+										token_nbr += 1;
+									} else {
+										text = text + '<a href="#" id="' + token_nbr + '" biber="' + biber_tag + '" new_biber="' + biber_tag + '" target_tag="1" class="conc_highlight" data-comments="" onclick="openTag(this);return false;">' + elements[0] + "</a> ";
+										token_nbr += 1;
+									}
+								} else {
+									text = text + '<a href="#" id="' + token_nbr + '" biber="' + biber_tag + '" title="' + biber_tag + '" new_biber="" target_tag="0" class="not_highlight" data-comments="" onclick="return false;">' + elements[0] + "</a> ";
+									token_nbr += 1;
+								}
+							}
+
+                		}
+                		document.getElementById('text_window').innerHTML = text;
+                		total_token_count = token_nbr;
+                		document.getElementById('filename').value = file_name.replace(/\.txt/g,'') + "_tagchecked.txt";
+                		//findNounSequences();
+                		//document.getElementById('info_box').innerHTML += filtered_tokens;
+                		if (filtered_tokens.length > 1) {
+                			document.getElementById('button_bar').style.display = 'inline';
+                			current_token = filtered_tokens[0];
+							openTag(document.getElementById(current_token));
+						}
+					};
+				reader.readAsText(filePath.files[0]);
+                };
+
+        }
+
+        function exportData() {
+		        var content = "Token\tOriginal_Biber_Tag\tNew_Biber_Tag\ttarget_feature\tmodified?\tComments\r\n";
+
+
+				for (var i = 0, length = total_token_count; i < length; i++) {
+
+					var token = document.getElementById(i);
+
+					if (token != null) {
+						clean_token = token.innerHTML.replace(/&lt;/g,'<');
+						clean_token = clean_token.replace(/&gt;/g,'>');
+						var old_tag = token.getAttribute('biber');
+						var new_tag =  token.getAttribute('new_biber');
+						var modified = 1;
+						if (old_tag == new_tag || new_tag == '') {modified = 0;};
+						content +=  clean_token + "\t" + old_tag + "\t" + new_tag + "\t" + token.getAttribute("target_tag") + "\t" + modified + "\t" + token.getAttribute("data-comments").replace(/\n/g,' ') + "\r\n";
+						}
+					}
+
+				var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+				var newfilename = document.getElementById('filename').value;
+				if (newfilename == '') {
+					newfilename = 'output.txt';
+				}
+				saveAs(blob, newfilename);
+
+		    }
+		</script>
+
+  </head>
+  <body>
+	<div id="top_bar" class="top_bar">
+		<table width="100%">
+			<tr>
+			<td><img src="images/crow_logo.png" width="50"></td>
+			<td>
+				<table>
+					<tr>
+						<td>Open File:</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="file" onchange='readText(this)' />
+						</td>
+					</tr>
+				</table>
+			</td>
+
+			<td><h2> New Biber Tag Checking Tool </h2></td>
+			<td><div id="cit_info">
+
+      </div></td>
+			<td><a href="#" class="button" onclick="location.reload();">Clear Tool</a></td>
+
+			</tr>
+		</table>
+
+	</div>
+
+	<div id="text_window" class="text_window"></div>
+	<div id="info_box" class="info_box">
+    Regular Expression for tags: <input type="text" id="regex" size="50" value="\+rel\+|tht\+.cmp|tht0|jj[rtb]?\+atrb\+">
+
+  </div>
+
+	<div id="bottom_bar" class="bottom_bar">
+
+		<form><a href="#" class="button" onclick="exportData();return false;">Download File</a> File name: <input type="text" id="filename" size="50">
+
+		</form>
+
+	</div>
+
+	<div id="button_bar" class="button_bar">
+	<a href="#" class="button" onclick="scrollUp();return false;"> &uarr;</a> <a href="#" class="button" onclick="scrollDown();return false;">&darr;</a>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="button" onclick="previous();return false;"> &lt;&lt; previous token </a> <a href="#" class="button" onclick="next();return false;"> next token &gt;&gt; </a>
+
+	</div>
+  </body>
+</html>
