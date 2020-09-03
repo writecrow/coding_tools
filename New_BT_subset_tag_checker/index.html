@@ -11,6 +11,7 @@
 		var current_token = 0;
 		var total_token_count = 0;
 		var filtered_tokens = [];
+    var selected_tags = '';
 
 		function includeComments(e) {
 			document.getElementById(current_token).setAttribute("data-comments", e.value);
@@ -95,9 +96,11 @@
     function get_precision(){
       var false_positives = 0;
       var true_positives = 0;
-      //var regex_string = document.getElementById('regex').value;
-	    
-      //var tags = regex_string.split("|")
+      var false_negatives = 0;
+
+      var tags = selected_tags.split("|")
+
+      var this_tag_regex = new RegExp(tags[0]);
 
       for (var i = 0, length = total_token_count; i < length; i++) {
 
@@ -111,8 +114,10 @@
             if (old_tag == new_tag) {
               true_positives = true_positives + 1;
             } else {
-              false_positives = false_positives + 1;
-
+              //separate false positive from false negative
+              if (old_tag.match(this_tag_regex)) {
+                false_positives = false_positives + 1;
+              }
             }
 
             }
@@ -122,7 +127,7 @@
 
         var precision = true_positives / (true_positives + false_positives)
 
-        document.getElementById('cit_info').innerHTML = "Overall Precision: " + precision.toFixed(2) + tags;
+        document.getElementById('cit_info').innerHTML = "Overall Precision" + " for tag " + tags[0] + ": " + precision.toFixed(2);
 
     }
 
@@ -132,7 +137,8 @@
 				file_name = filePath.files[0].name;
 				var output = ""; //placeholder for text output
 				//filter for target tags, change this regular expression to change filter
-        var regex_string = document.getElementById('regex').value
+        var regex_string = document.getElementById('regex').value;
+        selected_tags = regex_string;
         let tag_regex = new RegExp(regex_string);
 				var filter = tag_regex;
 				token_nbr = 0;
