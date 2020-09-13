@@ -543,16 +543,16 @@
 			this_text += 'CLAWS7: ' + e.getAttribute("claws") + '<br>';
 
 			this_text += '<table>';
-			this_text += '<tr><td><form>Biber Field 1: </td><td>' + biber_tags[0] + '</td><td> | '+ desc0 + '</td><td>'+ getOptionsField1() +'</td></tr>';
-			this_text += '<tr><td>Biber Field 2: </td><td>' + biber_tags[1] +  '</td><td> | '+ desc1 + '</td><td>'+ getOptionsField2() +'</td></tr>';
-			this_text += '<tr><td>Biber Field 3: </td><td>' + biber_tags[2] +  '</td><td> | '+ desc2 + '</td><td>'+ getOptionsField3() +'</td></tr>';
-			this_text += '<tr><td>Biber Field 4: </td><td>' + biber_tags[3] +  '</td><td> | '+ desc3 + '</td><td>'+ getOptionsField4() +'</td></tr>';
-			this_text += '<tr><td>Biber Field 5: </td><td>' + biber_tags[4] +  '</td><td> | '+ desc4 + '</td><td>'+ getOptionsField5() +'</td></tr>';
-			this_text += '<tr><td>Biber Field 6: </td><td>' + biber_tags[5] +  '</td><td> | '+ desc5 + '</td><td>'+ getOptionsField6() +'</td></tr>';
-			this_text += '<tr><td>Biber Field 7: </td><td>' + biber_tags[6] +  '</td><td> | '+ desc6 + '</td><td>'+ getOptionsField7() +'</form></td></tr>';
+			this_text += '<tr><td><form>Tag Field 1: </td><td>' + biber_tags[0] + '</td><td> | '+ desc0 + '</td><td>'+ getOptionsField1() +'</td></tr>';
+			this_text += '<tr><td>Tag Field 2: </td><td>' + biber_tags[1] +  '</td><td> | '+ desc1 + '</td><td>'+ getOptionsField2() +'</td></tr>';
+			this_text += '<tr><td>Tag Field 3: </td><td>' + biber_tags[2] +  '</td><td> | '+ desc2 + '</td><td>'+ getOptionsField3() +'</td></tr>';
+			this_text += '<tr><td>Tag Field 4: </td><td>' + biber_tags[3] +  '</td><td> | '+ desc3 + '</td><td>'+ getOptionsField4() +'</td></tr>';
+			this_text += '<tr><td>Tag Field 5: </td><td>' + biber_tags[4] +  '</td><td> | '+ desc4 + '</td><td>'+ getOptionsField5() +'</td></tr>';
+			this_text += '<tr><td>Tag Field 6: </td><td>' + biber_tags[5] +  '</td><td> | '+ desc5 + '</td><td>'+ getOptionsField6() +'</td></tr>';
+			this_text += '<tr><td>Tag Field 7: </td><td>' + biber_tags[6] +  '</td><td> | '+ desc6 + '</td><td>'+ getOptionsField7() +'</form></td></tr>';
 			this_text += '</table>';
-      this_text += '<hr>Original Biber Tag: ' + '<input type="text" name="original_label" value="' + e.getAttribute("biber") + '" readonly>';
-      this_text += '<br>Corrected Biber Tag:' + '<input type="text" id="new_label" name="new_label" value="' + corrected_biber_tag + '" readonly>';
+      this_text += '<hr>Original NAU Tag: ' + '<input type="text" name="original_label" value="' + e.getAttribute("biber") + '" readonly>';
+      this_text += '<br>Corrected NAU Tag:' + '<input type="text" id="new_label" name="new_label" value="' + corrected_biber_tag + '" readonly>';
 			this_text += '<hr>Comments:<br><textarea rows="4" cols="30" name="comments" onchange="includeComments(this);">' + e.getAttribute("data-comments")  + '</textarea>';
 			this_text += '</form>';
       document.getElementById('info_box').innerHTML = this_text;
