@@ -2,7 +2,7 @@
 <html>
   <head>
   	<meta charset="utf-8">
-    <title>Biber Tag Checking Tool</title>
+    <title>New NAU Tagger Checking Tool</title>
     <link href="style.css" rel="stylesheet">
     	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.6/d3.min.js"></script>
 		<script src="js/FileSaver.js"></script>
@@ -68,13 +68,13 @@
 			this_text += '<br>';
 			var biber_tags = e.getAttribute("biber").split("+");
 			this_text += '<table>';
-			this_text += '<tr><td><form>Biber Field 1: </td><td>' + biber_tags[0] + '</td><td><input type="text" id="field1" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 2: </td><td>' + biber_tags[1] + '</td><td><input type="text" id="field2" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 3: </td><td>' + biber_tags[2] + '</td><td><input type="text" id="field3" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 4: </td><td>' + biber_tags[3] + '</td><td><input type="text" id="field4" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 5: </td><td>' + biber_tags[4] + '</td><td><input type="text" id="field5" onchange="setNewTag();"></td></tr>';
-			this_text += '<tr><td>Biber Field 6: </td><td>' + biber_tags[5] + '</td><td><input type="text" id="field6" onchange="setNewTag();"></td></tr>'
-			this_text += '<tr><td>Biber Field 7: </td><td>' + biber_tags[6] + '</td><td><input type="text" id="field7" onchange="setNewTag();"></td></tr>'
+			this_text += '<tr><td><form>Tag Field 1: </td><td>' + biber_tags[0] + '</td><td><input type="text" id="field1" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Tag Field 2: </td><td>' + biber_tags[1] + '</td><td><input type="text" id="field2" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Tag Field 3: </td><td>' + biber_tags[2] + '</td><td><input type="text" id="field3" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Tag Field 4: </td><td>' + biber_tags[3] + '</td><td><input type="text" id="field4" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Tag Field 5: </td><td>' + biber_tags[4] + '</td><td><input type="text" id="field5" onchange="setNewTag();"></td></tr>';
+			this_text += '<tr><td>Tag Field 6: </td><td>' + biber_tags[5] + '</td><td><input type="text" id="field6" onchange="setNewTag();"></td></tr>'
+			this_text += '<tr><td>Tag Field 7: </td><td>' + biber_tags[6] + '</td><td><input type="text" id="field7" onchange="setNewTag();"></td></tr>'
 			this_text += '</table>';
 			this_text += '<hr>Comments:<br><textarea rows="4" cols="30" name="comments" onchange="includeComments(this);">' + e.getAttribute("data-comments")  + '</textarea>';
 			document.getElementById('info_box').innerHTML = this_text;
@@ -237,7 +237,7 @@
 				</table>
 			</td>
 
-			<td><h2> New Biber Tag Checking Tool </h2></td>
+			<td><h2> New NAUTagger: Tag Checking (Precision) </h2></td>
 			<td><div id="cit_info">
 
       </div></td>
