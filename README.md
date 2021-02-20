@@ -24,7 +24,7 @@ Output file: tab separated text file that can be opened using Excel
 
 ## Interactive De-identifying Tool
 
-[Open Deid tool](https://github.com/writecrow/coding_tools/blob/master/interactive_de-identifying_tool/index.html)
+[Open Deid tool](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/interactive_de-identifying_tool/index.html)
 
 This interface was designed to assist in manual de-identification of text files.  
 
