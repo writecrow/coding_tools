@@ -22,6 +22,16 @@ Input file: a text file tagged with the Stanford Dependency Parser (CoNNL format
 
 Output file: tab separated text file that can be opened using Excel
 
+## Interactive De-identifying Tool
+
+[Open Deid tool](https://github.com/writecrow/coding_tools/blob/master/interactive_de-identifying_tool/index.html)
+
+This interface was designed to assist in manual de-identification of text files.  
+
+Input file: UTF-8 encoded text file
+
+Output file: UTF-8 encoded text file
+
 ## Crow Output Coding Tool
 
 [Open Coding Tool](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/Crow%20Output%20Coding%20Tool/index.html)
