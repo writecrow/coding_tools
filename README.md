@@ -14,6 +14,14 @@ The tool highlights a subset of tags. Change the regular expression in the "Regu
 
 ![biber tagger subset tag checker](https://github.com/writecrow/coding_tools/blob/master/subset_tag_checker/subset_tag_checker_screenshot.png)
 
+## Stanford Tag Checker
+
+[Open Tag Checker](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/stanford_tag_checker/index.html)
+
+Input file: a text file tagged with the Stanford Dependency Parser (CoNNL format, one token per line, each column separated by tab)
+
+Output file: tab separated text file that can be opened using Excel
+
 ## Crow Output Coding Tool
 
 [Open Coding Tool](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/Crow%20Output%20Coding%20Tool/index.html)
