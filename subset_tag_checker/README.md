@@ -1,6 +1,6 @@
 # Subset tag Checker for the Biber Tagger
 
-Crow tools to assist human coders with coding and tag checking. We recommend you download these tools to your computer, and open each tool by click on the index.html file in each individual folder. If using the links provided below, make sure you wait a few seconds for your browser to load the CSS (i.e., style sheet).
+Crow tools to assist human coders with coding and tag checking. We recommend you download these tools to your computer, and open each tool by click on the index.html file in each individual folder. If using the link provided below, make sure you wait a few seconds for your browser to load the CSS (i.e., style sheet).
 
 [Open Tag Checker](http://htmlpreview.github.io/?https://github.com/writecrow/coding_tools/blob/master/subset_tag_checker/index.html)
 
